@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+PORT=5300
+
+set -x
+dig @127.0.0.1 -p "$PORT" "$@"

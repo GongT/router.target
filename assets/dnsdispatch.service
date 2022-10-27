@@ -1,0 +1,24 @@
+[Unit]
+Description=DNS dispathing server on 5300
+Requires=dnsconvert.service
+After=dnsconvert.service
+Conflicts=dnsmasq.service
+
+[Install]
+WantedBy=router.target
+
+[Service]
+ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf
+Type=simple
+
+RestartSec=5s
+Restart=on-failure
+
+ProtectSystem=strict
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+
+InaccessiblePaths=/data /etc/dnsmasq.conf
+BindPaths=/data/AppData/router/dns/dispatch:/etc/dnsmasq.d

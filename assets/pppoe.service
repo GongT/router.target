@@ -1,0 +1,33 @@
+[Unit]
+Description=PPPoE
+Wants=systemd-networkd.service
+# After=systemd-networkd.service
+
+[Install]
+WantedBy=router.target
+
+[Service]
+Type=forking
+GuessMainPID=yes
+ExecStartPre=-/usr/sbin/ip link del router-pppoe
+# TODO: dynamic create files
+ExecStartPre=-/usr/bin/mkdir -p /data/AppData/router/pppoe/runtime /data/AppData/router/pppoe/config
+ExecStart=/data/DevelopmentRoot/github.com/gongt/router.target/assets/pppoe.sh
+TimeoutStartSec=10s
+KillSignal=SIGHUP
+
+RestartSec=30s
+Restart=on-failure
+
+ProtectSystem=full
+DeviceAllow=/dev/ppp
+DevicePolicy=closed
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+
+BindPaths=/data/AppData/router/pppoe/runtime:/run/ppp
+
+BindReadOnlyPaths=/etc/ppp:/run/config/lower
+BindReadOnlyPaths=/data/AppData/router/pppoe/config:/run/config/upper
+TemporaryFileSystem=/etc/ppp

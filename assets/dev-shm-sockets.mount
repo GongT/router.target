@@ -1,0 +1,9 @@
+[Unit]
+Before=router.target services.target 
+
+[Mount]
+What=tmpfs
+Type=tmpfs
+
+[Install]
+WantedBy=local-fs.target

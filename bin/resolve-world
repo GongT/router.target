@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+PORT=8805
+
+set -x
+dig @::1 -p "$PORT" "$@"

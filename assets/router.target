@@ -1,0 +1,6 @@
+[Unit]
+Description=OpenWRT router and related service
+After=local-fs.target
+Conflicts=rescue.service rescue.target shutdown.target
+DefaultDependencies=no
+AllowIsolate=no

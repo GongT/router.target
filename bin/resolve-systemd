@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+NS=$(cat /var/run/systemd/resolve/stub-resolv.conf | grep '^nameserver' | sed 's/nameserver //'| head -n1)
+
+set -x
+dig "@$NS" "$@"

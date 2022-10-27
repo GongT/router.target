@@ -1,0 +1,9 @@
+[Unit]
+Description=auto check and renew ssl certs every day
+
+[Timer]
+OnCalendar=*-*-* 12:00:00
+Persistent=yes
+
+[Install]
+WantedBy=router.target

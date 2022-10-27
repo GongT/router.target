@@ -1,0 +1,22 @@
+[Unit]
+Description=Coredns (convert DNS to TCP) on 8805/8806
+After=network-online.target pppoe.service systemd-networkd.service
+
+[Install]
+WantedBy=router.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/coredns -conf /etc/coredns/Corefile
+
+RestartSec=5s
+Restart=on-failure
+
+ProtectSystem=strict
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+
+BindPaths=/data/AppData/router/dns/core:/etc/coredns
+BindPaths=/data/DevelopmentRoot/github.com/gongt/router.target/dist:/usr/local/bin

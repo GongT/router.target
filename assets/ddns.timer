@@ -1,0 +1,8 @@
+[Unit]
+Description=run ddns every 1 min
+
+[Install]
+WantedBy=router.target
+
+[Timer]
+OnUnitActiveSec=1min
