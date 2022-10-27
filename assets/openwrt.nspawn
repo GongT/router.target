@@ -1,0 +1,19 @@
+[Exec]
+Boot=yes
+Environment=
+Parameters=
+NotifyReady=no
+Capability=all
+ResolvConf=off
+Hostname=router
+Timezone=off
+
+[Network]
+Private=no
+
+[Files]
+Bind={DATA_DIR}/data:/data
+Bind={DATA_DIR}/config:/etc/config
+TemporaryFileSystem=/tmp
+# Bind=/etc/sysctl.d:/etc/sysctl.d
+

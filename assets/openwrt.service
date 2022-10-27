@@ -1,0 +1,18 @@
+[Unit]
+DefaultDependencies=no
+After=local-fs.target
+Conflicts=NetworkManager.service systemd-networkd.service systemd-networkd.socket
+
+[Service]
+Type=simple
+ExecStartPre=-/usr/bin/machinectl terminate openwrt
+ExecStart=/usr/bin/systemd-nspawn --settings=trusted --directory={FS_DIR}
+ExecStop={ROOT_DIR}/scripts/exec.sh poweroff
+ExecStopPost=-/usr/bin/systemctl start systemd-networkd --no-block
+Restart=always
+PIDFile=/run/openwrt.pid
+KillSignal=SIGINT
+RestartSec=5s
+
+[Install]
+WantedBy=router.target
