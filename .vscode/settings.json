@@ -1,0 +1,48 @@
+{
+	"files.associations": {
+		"*.json": "jsonc"
+	},
+	"search.exclude": {
+		"common/temp": true,
+		"**/node_modules/**/*": true,
+		"*/*/lib": true,
+		"*/*/.rush": true,
+		"**/*.api.json": true,
+		"**/*.api.md": true,
+		"*/*/pnpm-lock.yaml": true,
+		"**/package-public.d.ts": true,
+		"/common/temp": true,
+		"/common/config/rush/pnpm-lock.yaml": true,
+		"/common/autoinstallers/*/pnpm-lock.yaml": true,
+		"**/shrinkwrap-deps.json": true
+	},
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"common/temp/.npmrc": true,
+		"common/temp/.pnpmfile.cjs": true,
+		"common/temp/pnpm-*": true
+	},
+	"prettier.prettierPath": "common/temp/node_modules/prettier",
+	"prettier.requireConfig": true,
+	"typescript.tsdk": "./common/temp/node_modules/.pnpm/node_modules/typescript/lib",
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[json5]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[markdown]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[ignore]": {
+		"editor.defaultFormatter": "foxundermoon.shell-format"
+	},
+}

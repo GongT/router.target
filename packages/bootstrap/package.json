@@ -1,0 +1,13 @@
+{
+	"name": "@router/bootstrap",
+	"version": "1.0.0",
+	"description": "",
+	"bin": "",
+	"scripts": {},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"@router/server": "1.0.0"
+	}
+}

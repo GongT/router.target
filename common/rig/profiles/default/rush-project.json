@@ -1,0 +1,18 @@
+/**
+ * 这个文件需要更新注释，官网目前没有更新
+ * @url https://rushjs.io/pages/configs/rush-project_json/
+ */
+{
+	"$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush-project.schema.json",
+	"incrementalBuildIgnoredGlobs": ["docs", "*.md", "test/", "tests/"],
+	"operationSettings": [
+		{
+			"operationName": "build",
+			"outputFolderNames": ["lib", "temp"]
+		},
+		{
+			"operationName": "build:watch",
+			"outputFolderNames": ["lib", "temp"]
+		}
+	]
+}

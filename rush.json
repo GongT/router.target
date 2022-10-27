@@ -1,0 +1,230 @@
+{
+	"$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush.schema.json",
+	"rushVersion": "5.81.0",
+	"pnpmVersion": "6.16.1",
+	"pnpmOptions": {
+		"pnpmStore": "global",
+		"strictPeerDependencies": false,
+		"resolutionStrategy": "fewer-dependencies"
+	},
+	"nodeSupportedVersionRange": ">=16",
+	"ensureConsistentVersions": false,
+	"projectFolderMinDepth": 2,
+	"projectFolderMaxDepth": 2,
+	"gitPolicy": {
+		/**
+		 * Work at a big company?  Tired of finding Git commits at work with unprofessional Git
+		 * emails such as "beer-lover@my-college.edu"?  Rush can validate people's Git email address
+		 * before they get started.
+		 *
+		 * Define a list of regular expressions describing allowable e-mail patterns for Git commits.
+		 * They are case-insensitive anchored JavaScript RegExps.  Example: ".*@example\.com"
+		 *
+		 * IMPORTANT: Because these are regular expressions encoded as JSON string literals,
+		 * RegExp escapes need two backslashes, and ordinary periods should be "\\.".
+		 */
+		// "allowedEmailRegExps": [
+		//   "[^@]+@users\\.noreply\\.github\\.com",
+		//   "travis@example\\.org"
+		// ],
+		/**
+		 * When Rush reports that the address is malformed, the notice can include an example
+		 * of a recommended email.  Make sure it conforms to one of the allowedEmailRegExps
+		 * expressions.
+		 */
+		// "sampleEmail": "example@users.noreply.github.com",
+		/**
+		 * The commit message to use when committing changes during 'rush publish'.
+		 *
+		 * For example, if you want to prevent these commits from triggering a CI build,
+		 * you might configure your system's trigger to look for a special string such as "[skip-ci]"
+		 * in the commit message, and then customize Rush's message to contain that string.
+		 */
+		// "versionBumpCommitMessage": "Bump versions [skip ci]",
+		/**
+		 * The commit message to use when committing changes during 'rush version'.
+		 *
+		 * For example, if you want to prevent these commits from triggering a CI build,
+		 * you might configure your system's trigger to look for a special string such as "[skip-ci]"
+		 * in the commit message, and then customize Rush's message to contain that string.
+		 */
+		// "changeLogUpdateCommitMessage": "Update changelogs [skip ci]",
+		/**
+		 * The commit message to use when commiting changefiles during 'rush change --commit'
+		 *
+		 * If no commit message is set it will default to 'Rush change'
+		 */
+		// "changefilesCommitMessage": "Rush change"
+	},
+	"repository": {
+		/**
+		 * The URL of this Git repository, used by "rush change" to determine the base branch for your PR.
+		 *
+		 * The "rush change" command needs to determine which files are affected by your PR diff.
+		 * If you merged or cherry-picked commits from the main branch into your PR branch, those commits
+		 * should be excluded from this diff (since they belong to some other PR).  In order to do that,
+		 * Rush needs to know where to find the base branch for your PR.  This information cannot be
+		 * determined from Git alone, since the "pull request" feature is not a Git concept.  Ideally
+		 * Rush would use a vendor-specific protocol to query the information from GitHub, Azure DevOps, etc.
+		 * But to keep things simple, "rush change" simply assumes that your PR is against the "main" branch
+		 * of the Git remote indicated by the repository.url setting in rush.json.  If you are working in
+		 * a GitHub "fork" of the real repo, this setting will be different from the repository URL of your
+		 * your PR branch, and in this situation "rush change" will also automatically invoke "git fetch"
+		 * to retrieve the latest activity for the remote main branch.
+		 */
+		// "url": "https://github.com/microsoft/rush-example",
+		/**
+		 * The default branch name. This tells "rush change" which remote branch to compare against.
+		 * The default value is "main"
+		 */
+		"defaultBranch": "master"
+		/**
+		 * The default remote. This tells "rush change" which remote to compare against if the remote URL is
+		 * not set or if a remote matching the provided remote URL is not found.
+		 */
+		// "defaultRemote": "origin"
+	},
+	"eventHooks": {
+		/**
+		 * The list of shell commands to run before the Rush installation starts
+		 */
+		"preRushInstall": [
+			// "common/scripts/pre-rush-install.js"
+		],
+		/**
+		 * The list of shell commands to run after the Rush installation finishes
+		 */
+		"postRushInstall": [],
+		/**
+		 * The list of shell commands to run before the Rush build command starts
+		 */
+		"preRushBuild": [],
+		/**
+		 * The list of shell commands to run after the Rush build command finishes
+		 */
+		"postRushBuild": []
+	},
+	"variants": [
+		// {
+		//   /**
+		//    * The folder name for this variant.
+		//    */
+		//   "variantName": "old-sdk",
+		//
+		//   /**
+		//    * An informative description
+		//    */
+		//   "description": "Build this repo using the previous release of the SDK"
+		// }
+	],
+	"projects": [
+		// {
+		//   /**
+		//    * The NPM package name of the project (must match package.json)
+		//    */
+		//   "packageName": "my-app",
+		//
+		//   /**
+		//    * The path to the project folder, relative to the rush.json config file.
+		//    */
+		//   "projectFolder": "apps/my-app",
+		//
+		//   /**
+		//    * An optional category for usage in the "browser-approved-packages.json"
+		//    * and "nonbrowser-approved-packages.json" files.  The value must be one of the
+		//    * strings from the "reviewCategories" defined above.
+		//    */
+		//   "reviewCategory": "production",
+		//
+		//   /**
+		//    * A list of Rush project names that are to be installed from NPM
+		//    * instead of linking to the local project.
+		//    *
+		//    * If a project's package.json specifies a dependency that is another Rush project
+		//    * in the monorepo workspace, normally Rush will locally link its folder instead of
+		//    * installing from NPM.  If you are using PNPM workspaces, this is indicated by
+		//    * a SemVer range such as "workspace:^1.2.3".  To prevent mistakes, Rush reports
+		//    * an error if the "workspace:" protocol is missing.
+		//    *
+		//    * Locally linking ensures that regressions are caught as early as possible and is
+		//    * a key benefit of monorepos.  However there are occasional situations where
+		//    * installing from NPM is needed.  A classic example is a cyclic dependency.
+		//    * Imagine three Rush projects: "my-toolchain" depends on "my-tester", which depends
+		//    * on "my-library".  Suppose that we add "my-toolchain" to the "devDependencies"
+		//    * of "my-library" so it can be built by our toolchain.  This cycle creates
+		//    * a problem -- Rush can't build a project using a not-yet-built dependency.
+		//    * We can solve it by adding "my-toolchain" to the "decoupledLocalDependencies"
+		//    * of "my-library", so it builds using the last published release.  Choose carefully
+		//    * which package to decouple; some choices are much easier to manage than others.
+		//    *
+		//    * (In older Rush releases, this setting was called "cyclicDependencyProjects".)
+		//    */
+		//   "decoupledLocalDependencies": [
+		//     // "my-toolchain"
+		//   ],
+		//
+		//   /**
+		//    * If true, then this project will be ignored by the "rush check" command.
+		//    * The default value is false.
+		//    */
+		//   // "skipRushCheck": false,
+		//
+		//   /**
+		//    * A flag indicating that changes to this project will be published to npm, which affects
+		//    * the Rush change and publish workflows. The default value is false.
+		//    * NOTE: "versionPolicyName" and "shouldPublish" are alternatives; you cannot specify them both.
+		//    */
+		//   // "shouldPublish": false,
+		//
+		//   /**
+		//    * Facilitates postprocessing of a project's files prior to publishing.
+		//    *
+		//    * If specified, the "publishFolder" is the relative path to a subfolder of the project folder.
+		//    * The "rush publish" command will publish the subfolder instead of the project folder.  The subfolder
+		//    * must contain its own package.json file, which is typically a build output.
+		//    */
+		//   // "publishFolder": "temp/publish",
+		//
+		//   /**
+		//    * An optional version policy associated with the project.  Version policies are defined
+		//    * in "version-policies.json" file.  See the "rush publish" documentation for more info.
+		//    * NOTE: "versionPolicyName" and "shouldPublish" are alternatives; you cannot specify them both.
+		//    */
+		//   // "versionPolicyName": "",
+		//
+		//   /**
+		//    * An optional set of custom tags that can be used to select this project.  For example,
+		//    * adding "my-custom-tag" will allow this project to be selected by the
+		//    * command "rush list --only tag:my-custom-tag".  The tag name must be one or more words
+		//    * separated by hyphens or slashes, where a word may contain lowercase ASCII letters, digits,
+		//    * ".", and "@" characters.
+		//    */
+		//   // "tags": [ "1.0.0-release", "frontend-team" ]
+		// },
+		{
+			"packageName": "@router/assets",
+			"projectFolder": "packages/assets"
+		},
+		{
+			"packageName": "@router/client",
+			"projectFolder": "packages/client"
+		},
+		{
+			"packageName": "@router/installer",
+			"projectFolder": "packages/installer"
+		},
+		{
+			"packageName": "@router/server",
+			"projectFolder": "packages/server"
+		},
+		{
+			"packageName": "@router/bootstrap",
+			"projectFolder": "packages/bootstrap"
+		},
+		{
+			"packageName": "@router/rig",
+			"skipRushCheck": false,
+			"projectFolder": "common/rig"
+		}
+	]
+}

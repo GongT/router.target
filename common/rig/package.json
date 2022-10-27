@@ -1,0 +1,10 @@
+{
+	"name": "@router/rig",
+	"version": "1.0.0",
+	"private": true,
+	"description": "",
+	"author": "",
+	"license": "MIT",
+	"dependencies": {},
+	"devDependencies": {}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "@router/installer",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"bin": {
+		"router-install": "./lib/bin.js"
+	},
+	"scripts": {
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"@router/rig": "1.0.0"
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"name": "@router/client",
+	"version": "1.0.0",
+	"description": "",
+	"main": "lib/index.js",
+	"scripts": {},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"@router/rig": "1.0.0"
+	}
+}
