@@ -1,23 +1,17 @@
 [Unit]
-Description=V2Ray Service for bridge DNS requests on many ports
-Documentation=https://www.v2fly.org/
-After=network.target nss-lookup.target
-Before=clash.service
+Description=clash proxy server for dns
+After=network-online.target pppoe.service dnscache.service
 
 [Install]
 WantedBy=router.target
 
 [Service]
 Type=simple
-CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-NoNewPrivileges=true
-ExecStart=/usr/local/bin/v2ray -config /etc/v2ray/config.json
+ExecStartPre=/usr/bin/cat /etc/resolv.conf
+ExecStart=/usr/local/bin/clash -d /etc/clash -ext-ui /etc/clash/yacd
+
 RestartSec=5s
 Restart=on-failure
-RestartPreventExitStatus=23
-
-DynamicUser=yes
 
 ProtectSystem=strict
 PrivateDevices=yes
@@ -25,6 +19,7 @@ ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=yes
 
-InaccessiblePaths=/data
-BindPaths=/data/AppData/router/dns/v2ray:/etc/v2ray
-BindPaths=/data/DevelopmentRoot/github.com/gongt/router.target/dist/v2ray:/usr/local/bin
+BindReadOnlyPaths=${LocalConfigDir}/clash/resolv.conf:/etc/resolv.conf
+BindPaths=${LocalConfigDir}/clash:/etc/clash
+BindReadOnlyPaths=${DistBinaryDir}/clash/yacd/public/:/etc/clash/yacd
+BindReadOnlyPaths=${DistBinaryDir}/clash/bin:/usr/local/bin

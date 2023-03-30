@@ -4,5 +4,5 @@ Description=check ip change, and run ddns
 [Service]
 Type=oneshot
 RemainAfterExit=no
-ExecStart=/bin/bash /data/DevelopmentRoot/github.com/gongt/router.target/assets/ddns/run.sh
+ExecStart=/bin/bash "${LocalConfigDir}/ddns/run.sh"
 StateDirectory=ddns

@@ -4,7 +4,7 @@ set -Eeuo pipefail
 
 DDNS_HOST=
 DDNS_KEY=''
-source /data/AppData/router/ddns/config.sh
+source ${AppDataDir}/ddns/config.sh
 
 function pecho() {
 	echo "[DDNS] (ipv$NET_TYPE) $*" >&2

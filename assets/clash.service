@@ -1,14 +1,13 @@
 [Unit]
 Description=clash proxy server
 After=network-online.target pppoe.service dnscache.service
-# Requires=dnscache.service dnsproxy.service
 
 [Install]
 WantedBy=router.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/clash -d /etc/clash -ext-ui /etc/clash/clash-ui
+ExecStart=/usr/local/bin/clash -d /etc/clash -ext-ui /etc/clash/yacd
 
 RestartSec=5s
 Restart=on-failure
@@ -19,6 +18,7 @@ ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=yes
 
-BindReadOnlyPaths=/data/AppData/router/pppoe/runtime/resolv.conf:/etc/resolv.conf
-BindPaths=/data/AppData/router/clash:/etc/clash
-BindPaths=/data/DevelopmentRoot/github.com/gongt/router.target/dist:/usr/local/bin
+BindReadOnlyPaths=${AppDataDir}/pppoe/runtime/resolv.conf:/etc/resolv.conf
+BindPaths=${AppDataDir}/clash:/etc/clash
+BindReadOnlyPaths=${DistBinaryDir}/clash/yacd/public/:/etc/clash/yacd
+BindReadOnlyPaths=${DistBinaryDir}/clash/bin:/usr/local/bin

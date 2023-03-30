@@ -6,7 +6,7 @@ Type=oneshot
 RemainAfterExit=no
 Environment=NO_TIMESTAMP=1
 ExecStart=/root/.acme.sh/acme.sh --home "/root/.acme.sh" --upgrade
-ExecStart=/root/.acme.sh/acme.sh --cron --debug --home "/root/.acme.sh" --config-home "/data/AppData/router/ACME/"
+ExecStart=/root/.acme.sh/acme.sh --cron --debug --home "/root/.acme.sh" --config-home "${AppDataDir}/ACME/"
 
 ProtectSystem=strict
 PrivateDevices=yes
@@ -15,4 +15,4 @@ ProtectControlGroups=yes
 ProtectHome=read-only
 
 ReadWritePaths=/root/.acme.sh
-ReadWritePaths=/data/AppData/router/ACME
+ReadWritePaths=${AppDataDir}/ACME

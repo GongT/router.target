@@ -2,7 +2,7 @@
 Description=DNS caching server on 53
 After=dnsdispatch.service systemd-networkd.service
 Wants=nss-lookup.target
-Requires=systemd-resolved.service
+Requires=dnsdispatch.service
 Conflicts=dnsmasq.service
 
 [Install]
@@ -22,6 +22,6 @@ ProtectControlGroups=yes
 ProtectHome=yes
 
 InaccessiblePaths=/data /etc/dnsmasq.conf
-BindPaths=/data/AppData/router/dns/cache:/etc/dnsmasq.d
+BindPaths=${AppDataDir}/dns/cache:/etc/dnsmasq.d
 BindPaths=/etc/hosts:/run/hosts/system
-BindPaths=/data/AppData/router/dhcp/leases:/run/leases
+BindPaths=${AppDataDir}/dhcp/leases:/run/leases

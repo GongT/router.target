@@ -1,7 +1,7 @@
 [Unit]
 Description=DNS dispathing server on 5300
-Requires=dnsconvert.service
-After=dnsconvert.service
+Requires=systemd-resolved.service dnsconvert.service
+After=systemd-resolved.service dnsconvert.service
 Conflicts=dnsmasq.service
 
 [Install]
@@ -21,4 +21,4 @@ ProtectControlGroups=yes
 ProtectHome=yes
 
 InaccessiblePaths=/data /etc/dnsmasq.conf
-BindPaths=/data/AppData/router/dns/dispatch:/etc/dnsmasq.d
+BindPaths=${AppDataDir}/dns/dispatch:/etc/dnsmasq.d

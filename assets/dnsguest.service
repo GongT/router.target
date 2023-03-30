@@ -1,13 +1,14 @@
 [Unit]
-Description=DHCP server
-Requires=systemd-networkd.service
-After=systemd-networkd.service
+Description=DNS server for guest network
+After=dnsdispatch.service systemd-networkd.service
+Wants=nss-lookup.target
+Requires=systemd-resolved.service 
+Conflicts=dnsmasq.service
 
 [Install]
 WantedBy=router.target
 
 [Service]
-ExecStartPre=/usr/sbin/ip addr
 ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf
 Type=simple
 
@@ -15,11 +16,12 @@ RestartSec=5s
 Restart=on-failure
 
 ProtectSystem=strict
-PrivateDevices=no
-ProtectKernelTunables=no
+PrivateDevices=yes
+ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=yes
 
 InaccessiblePaths=/data /etc/dnsmasq.conf
-BindPaths=${AppDataDir}/dhcp/config:/etc/dnsmasq.d
+BindPaths=${AppDataDir}/dns/guest:/etc/dnsmasq.d
+BindPaths=/etc/hosts:/run/hosts/system
 BindPaths=${AppDataDir}/dhcp/leases:/run/leases

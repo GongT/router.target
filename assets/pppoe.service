@@ -11,8 +11,8 @@ Type=forking
 GuessMainPID=yes
 ExecStartPre=-/usr/sbin/ip link del router-pppoe
 # TODO: dynamic create files
-ExecStartPre=-/usr/bin/mkdir -p /data/AppData/router/pppoe/runtime /data/AppData/router/pppoe/config
-ExecStart=/data/DevelopmentRoot/github.com/gongt/router.target/assets/pppoe.sh
+ExecStartPre=-/usr/bin/mkdir -p ${AppDataDir}/pppoe/runtime ${AppDataDir}/pppoe/config
+ExecStart=${LocalConfigDir}/pppoe/pppoe.sh
 TimeoutStartSec=10s
 KillSignal=SIGHUP
 
@@ -26,8 +26,8 @@ ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=yes
 
-BindPaths=/data/AppData/router/pppoe/runtime:/run/ppp
+BindPaths=${AppDataDir}/pppoe/runtime:/run/ppp
 
 BindReadOnlyPaths=/etc/ppp:/run/config/lower
-BindReadOnlyPaths=/data/AppData/router/pppoe/config:/run/config/upper
+BindReadOnlyPaths=${AppDataDir}/pppoe/config:/run/config/upper
 TemporaryFileSystem=/etc/ppp

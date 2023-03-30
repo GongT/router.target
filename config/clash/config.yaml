@@ -1,0 +1,61 @@
+mixed-port: 8807
+ipv6: true
+allow-lan: false
+bind-address: '::1'
+mode: rule
+log-level: warn
+# log-level: debug
+external-controller: 0.0.0.0:46667
+# interface-name: ppp0
+
+# dns:
+#   enabled: true
+#   listen: 0.0.0.0:18896
+#   #  enhanced-mode: fake-ip
+#   default-nameserver:
+#     - tls://1.12.12.12
+#     - tls://120.53.53.53
+#     - tls://223.5.5.5
+#     - tls://223.6.6.6 
+
+#   nameserver:
+#     - tls://cloudflare-dns.com:853
+#     - tls://dns.quad9.net:853
+#     - tls://dns.google:853
+#     - tls://dns.adguard.com:853
+#     - tls://p2.freedns.controld.com:853
+#     - tls://security-filter-dns.cleanbrowsing.org:853
+
+profile:
+
+proxy-groups:
+  - name: fastest
+    type: url-test
+    use:
+      - BitEB
+        #interface-name: ppp0
+    url: http://www.gstatic.com/generate_204
+    interval: 60
+
+proxy-providers:
+  BitEB:
+    type: http
+    path: ./providers/BitEB.yaml
+    url: https://rss.biteb-sub.com/link/4qDzJbt8JPWuscoA?clash=1
+    interval: 3600
+    health-check:
+      enable: true
+      interval: 600
+      # lazy: true
+      url: https://www.youtube.com/
+
+tunnels:
+  - tcp/udp,[::1]:28842,208.67.222.222:53,fastest
+  - tcp/udp,[::1]:28843,1.1.1.1:53,fastest
+  - tcp/udp,[::1]:28844,8.8.8.8:53,fastest
+  - tcp/udp,[::1]:28845,9.9.9.9:53,fastest
+  - tcp/udp,[::1]:28846,64.6.64.6:53,fastest
+  - tcp/udp,[::1]:28847,74.82.42.42:53,fastest
+
+rules:
+  - MATCH,fastest
