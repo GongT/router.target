@@ -4,7 +4,8 @@ set -Eeuo pipefail
 
 DDNS_HOST=
 DDNS_KEY=''
-source ${AppDataDir}/ddns/config.sh
+WAN_DEV=ppp0
+source "${AppDataDir}/ddns/config.sh"
 
 function pecho() {
 	echo "[DDNS] (ipv$NET_TYPE) $*" >&2
@@ -57,7 +58,7 @@ fi
 
 ### IPV4
 export NET_TYPE=4
-IP=$(ip addr show dev router-pppoe | grep ' inet ' | grep 'scope global' | head -n1 | ip addr show dev router-pppoe | grep ' inet ' | grep 'scope global' | grep -oP '\b([0-9]+\.){3}[0-9]+\b' | head -n1 || true)
+IP=$(ip addr show dev "$WAN_DEV" | grep ' inet ' | grep 'scope global' | head -n1 | ip addr show dev "$WAN_DEV" | grep ' inet ' | grep 'scope global' | grep -oP '\b([0-9]+\.){3}[0-9]+\b' | head -n1 || true)
 
 if [[ ! $IP ]]; then
 	die "missing IPv4 on WAN interface"

@@ -40,14 +40,15 @@ proxy-groups:
 proxy-providers:
   BitEB:
     type: http
-    path: ./providers/BitEB.yaml
-    url: https://rss.biteb-sub.com/link/4qDzJbt8JPWuscoA?clash=1
-    interval: 3600
+    path: ./providers/_local.yaml
+    url: http://127.0.0.1:39104/clash
+    interval: 600
     health-check:
       enable: true
       interval: 600
       # lazy: true
-      url: https://www.youtube.com/
+      url: https://google.com/
+
 
 tunnels:
   - tcp/udp,[::1]:28842,208.67.222.222:53,fastest
