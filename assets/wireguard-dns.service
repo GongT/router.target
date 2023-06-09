@@ -25,3 +25,5 @@ ProtectHome=yes
 InaccessiblePaths=/data /etc/dnsmasq.conf
 BindPaths=${AppDataDir}/wireguard/dns:/etc/dnsmasq.d
 BindPaths=${AppDataDir}/dhcp/leases:/run/leases
+
+Slice=router.slice

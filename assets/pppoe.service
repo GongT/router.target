@@ -31,3 +31,5 @@ BindPaths=${AppDataDir}/pppoe/runtime:/run/ppp
 BindReadOnlyPaths=/etc/ppp:/run/config/lower
 BindReadOnlyPaths=${AppDataDir}/pppoe/config:/run/config/upper
 TemporaryFileSystem=/etc/ppp
+
+Slice=router.slice

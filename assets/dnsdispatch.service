@@ -22,3 +22,5 @@ ProtectHome=yes
 
 InaccessiblePaths=/data /etc/dnsmasq.conf
 BindPaths=${AppDataDir}/dns/dispatch:/etc/dnsmasq.d
+
+Slice=router.slice

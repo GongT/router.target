@@ -22,3 +22,6 @@ BindReadOnlyPaths=${AppDataDir}/pppoe/runtime/resolv.conf:/etc/resolv.conf
 BindPaths=${AppDataDir}/clash:/etc/clash
 BindReadOnlyPaths=${DistBinaryDir}/clash/yacd/public/:/etc/clash/yacd
 BindReadOnlyPaths=${DistBinaryDir}/clash/bin:/usr/local/bin
+
+Slice=router.slice
+CPUWeight=90

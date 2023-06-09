@@ -25,3 +25,5 @@ InaccessiblePaths=/data /etc/dnsmasq.conf
 BindPaths=${AppDataDir}/dns/cache:/etc/dnsmasq.d
 BindPaths=/etc/hosts:/run/hosts/system
 BindPaths=${AppDataDir}/dhcp/leases:/run/leases
+
+Slice=router.slice

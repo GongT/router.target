@@ -5,4 +5,6 @@ Description=run ddns every 1 min
 WantedBy=router.target
 
 [Timer]
-OnUnitActiveSec=1min
+OnUnitInactiveSec=1min
+OnBootSec=30s
+
