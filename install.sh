@@ -25,11 +25,16 @@ for F in assets/*.timer assets/*.service assets/*.target assets/*.mount; do
 	DATA=$(<"$SRC")
 
 	{
-		echo "$DATA" | sed -s "s#\\\${DistBinaryDir}#$DIST_ROOT#g; s#\\\${AppDataDir}#${AppDataDir}#g; s#\\\${LocalConfigDir}#${LocalConfigDir}#g"
+		echo "$DATA" | sed -s "s#\\\${DistBinaryDir}#$DIST_ROOT#g; s#\\\${PWD}#$(pwd)#g; s#\\\${AppDataDir}#${AppDataDir}#g; s#\\\${LocalConfigDir}#${LocalConfigDir}#g"
 		echo ""
 		echo "##### ROUTER GENERATED: source=$SRC"
 	} >"$DIST"
 done
 
+mapfile -t FILES < <(find "$SERVICES_DIR" -maxdepth 2 -name install.sh)
+for F in "${FILES[@]}"; do
+	install_script "$F"
+done
+
 systemctl daemon-reload
-systemctl reenable "${NAMES[@]}"
+systemctl enable "${NAMES[@]}" "${REGISTERD_UNITS[@]}"

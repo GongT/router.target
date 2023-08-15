@@ -4,7 +4,6 @@ After=dnsdispatch.service systemd-networkd.service
 Wants=nss-lookup.target
 Requires=systemd-resolved.service 
 Conflicts=dnsmasq.service
-PartOf=wg-quick@vpn.service
 
 [Install]
 WantedBy=router.target
@@ -23,7 +22,6 @@ ProtectControlGroups=yes
 ProtectHome=yes
 
 InaccessiblePaths=/data /etc/dnsmasq.conf
-BindPaths=${AppDataDir}/wireguard/dns:/etc/dnsmasq.d
-BindPaths=${AppDataDir}/dhcp/leases:/run/leases
+BindPaths=${PWD}/config:/etc/dnsmasq.d
 
 Slice=router.slice

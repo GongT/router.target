@@ -6,7 +6,7 @@ Type=oneshot
 RemainAfterExit=no
 ExecStart=/bin/bash "${LocalConfigDir}/ddns/run.sh"
 StateDirectory=ddns
-Environment=AppDataDir=${AppDataDir}
+EnvironmentFile=${AppDataDir}/ddns/config.sh
 
 Slice=router.slice
 CPUWeight=90

@@ -1,6 +1,6 @@
 [Unit]
 Description=clash proxy server
-After=network-online.target pppoe.service dnscache.service clash-subscription-processor.service
+After=network-online.target pppoe.service systemd-resolved.service clash-subscription-processor.service
 
 [Install]
 WantedBy=router.target

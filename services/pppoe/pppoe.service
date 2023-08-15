@@ -9,15 +9,14 @@ WantedBy=router.target
 [Service]
 Type=forking
 GuessMainPID=yes
-ExecStartPre=-/usr/sbin/ip link del router-pppoe
-# TODO: dynamic create files
-ExecStartPre=-/usr/bin/mkdir -p ${AppDataDir}/pppoe/runtime ${AppDataDir}/pppoe/config
-ExecStart=${LocalConfigDir}/pppoe/pppoe.sh
+ExecStartPre=-/usr/bin/mkdir -p ${AppDataDir}/pppoe
+ExecStart=${PWD}/pppoe.sh
 TimeoutStartSec=10s
 KillSignal=SIGHUP
 
 RestartSec=30s
 Restart=on-failure
+RestartPreventExitStatus=233
 
 ProtectSystem=full
 DeviceAllow=/dev/ppp
@@ -26,10 +25,11 @@ ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=yes
 
-BindPaths=${AppDataDir}/pppoe/runtime:/run/ppp
+StateDirectory=pppoe
 
 BindReadOnlyPaths=/etc/ppp:/run/config/lower
-BindReadOnlyPaths=${AppDataDir}/pppoe/config:/run/config/upper
+BindReadOnlyPaths=${PWD}/helpers:/run/config/middle
+BindPaths=${AppDataDir}/pppoe:/run/config/upper
 TemporaryFileSystem=/etc/ppp
 
 Slice=router.slice

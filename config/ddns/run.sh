@@ -2,13 +2,21 @@
 
 set -Eeuo pipefail
 
-DDNS_HOST=
-DDNS_KEY=''
 WAN_DEV=ppp0
-source "${AppDataDir}/ddns/config.sh"
+IPV4=
+LASTUPDATE4=0
+IPV6=
+LASTUPDATE6=0
+STATE_FILE="ddns-state.sh"
+declare -i FORCE_TS=$(date +%s)
+FORCE_TS=$((FORCE_TS - 43200))
+
+if [[ ${DDNS_KEY+found} != found ]] || [[ ${DDNS_KEY+found} != found ]]; then
+	source "/data/AppData/router/ddns/config.sh"
+fi
 
 function pecho() {
-	echo "[DDNS] (ipv$NET_TYPE) $*" >&2
+	echo -e "[DDNS] (ipv$NET_TYPE) $*" >&2
 }
 
 function x() {
@@ -35,26 +43,35 @@ function ddns_script() {
 	pecho "update done."
 }
 
-function save() {
-	local NAME=$1 VALUE=$2 DATA
-
-	if [[ -e ddns-history.txt ]]; then
-		DATA=$(grep -v "$NAME=" ddns-history.txt || true)
+function load() {
+	if ! [[ -e $STATE_FILE ]]; then
+		return
 	fi
 
+	local _IPV4 _LASTUPDATE4 _IPV6 _LASTUPDATE6
+
+	source "$STATE_DIRECTORY/$STATE_FILE" || {
+		echo "invalid variable file: $STATE_DIRECTORY/$STATE_FILE" >&2
+		echo "some variable will not load" >&2
+	}
+
+	IPV4=${_IPV4:-''}
+	LASTUPDATE4=${_LASTUPDATE4:-'0'}
+	IPV6=${_IPV6:-''}
+	LASTUPDATE6=${_LASTUPDATE6:-'0'}
+}
+function save() {
 	{
-		echo "$DATA"
-		echo $'\n'
-		echo "$NAME='$VALUE'"
-	} | tee ddns-history.txt
+		echo "_IPV4=$(printf %q "$IPV4")"
+		echo "_LASTUPDATE4=$(printf %q "$LASTUPDATE4")"
+		echo "_IPV6=$(printf %q "$IPV6")"
+		echo "_LASTUPDATE6=$(printf %q "$LASTUPDATE6")"
+	} >"$STATE_DIRECTORY/$STATE_FILE"
 }
 
 echo "STATE_DIRECTORY=$STATE_DIRECTORY"
 cd "$STATE_DIRECTORY"
-
-if [[ -e ddns-history.txt ]]; then
-	source ddns-history.txt || die "invalid variable file: $(pwd)ddns-history.txt" >&2
-fi
+load
 
 ### IPV4
 export NET_TYPE=4
@@ -67,19 +84,21 @@ fi
 ipcalc --check --ipv4 "$IP"
 
 pecho "interface IP: $IP"
-if [[ "${IPV4:-}" ]] && [[ $IP == "$IPV4" ]]; then
-	pecho "address not changed"
+if [[ $IP == "$IPV4" ]] && [[ $LASTUPDATE4 -gt $FORCE_TS ]]; then
+	pecho "address not changed (update at $(date "--date=@$LASTUPDATE4" '+%Y-%m-%d %H:%M:%S'))"
 else
-	pecho "address change from ${IPV4:-} to $IP"
+	pecho "address change from ${IPV4-} to $IP"
 
 	ddns_script 4
 
-	save IPV4 "$IP"
+	IPV4=$IP
+	LASTUPDATE4=$(date +%s)
+	save
 fi
 
 ### IPV6
 export NET_TYPE=6
-IP=$(ip addr show dev br-lan | grep ' inet6 ' | grep ' scope global ' | grep ' dynamic ' | grep -oP '\b[0-9a-f:]{10,}(?=/)' | head -n1 || true)
+IP=$(ip addr show dev "$WAN_DEV" | grep ' inet6 ' | grep ' scope global ' | grep ' dynamic ' | grep -oP '\b[0-9a-f:]{10,}(?=/)' | head -n1 || true)
 
 if [[ ! $IP ]]; then
 	pecho "\e[38;5;11mmissing IPv6 on WAN interface\e[0m"
@@ -89,12 +108,14 @@ fi
 ipcalc --check --ipv6 "$IP"
 
 pecho "interface IP: $IP"
-if [[ "${IPV6:-}" ]] && [[ $IP == "$IPV6" ]]; then
-	pecho "address not changed"
+if [[ $IP == "$IPV6" ]] && [[ $LASTUPDATE4 -gt $FORCE_TS ]]; then
+	pecho "address not changed (update at $(date "--date=@$LASTUPDATE4" '+%Y-%m-%d %H:%M:%S'))"
 else
-	pecho "address change from ${IPV6:-} to $IP"
+	pecho "address change from ${IPV6-} to $IP"
 
 	ddns_script 6
 
-	save IPV6 "$IP"
+	IPV6=$IP
+	LASTUPDATE6=$(date +%s)
+	save
 fi

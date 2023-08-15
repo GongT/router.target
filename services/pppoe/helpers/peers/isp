@@ -1,0 +1,16 @@
+noipdefault
+defaultroute
+replacedefaultroute
+noauth
+# nodeflate
+lcp-echo-adaptive
+lcp-echo-failure 30
+lcp-echo-interval 15
+maxfail 3
+# +ipv6
+# ipv6cp-accept-local
+# ipv6cp-use-persistent
+# usepeerdns
+plugin pppoe.so
+# plugin winbind.so
+debug

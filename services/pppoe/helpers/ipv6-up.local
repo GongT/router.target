@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+echo "[ipv6-up] local script running..."
+
+systemctl start ddns.service --no-block
+

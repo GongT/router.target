@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo "[ipv4-up] local script running..."
+
+systemctl restart ddns.service --no-block
