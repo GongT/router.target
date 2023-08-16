@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+declare -r IF_NAME=$1
+declare -r TTY_DEVICE=$2
+declare -r SPEED=$3
+declare -r LOCAL_IP=$4
+declare -r REMOTE_IP=$5
+declare -r IP_PARAM=$6
+
+export PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+log() {
+	logger --tag 'pppoe:ipv4' --stderr "$*"
+}
+
+log "[ipv4-up] interface-name=$IF_NAME tty-device=$TTY_DEVICE speed=$SPEED local-IP-address=$LOCAL_IP remote-IP-address=$REMOTE_IP ipparam=$IP_PARAM"
+env | logger --tag 'pppoe:ipv4'
+
+systemctl start ddns.service --no-block

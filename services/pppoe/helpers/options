@@ -1,0 +1,26 @@
+debug
+lock
+plugin pppoe.so
+noipdefault
+defaultroute
+replacedefaultroute
+noauth
+# persist
+maxfail 3
+chap-interval 5
+chap-max-challenge 3
+eap-interval 5
+eap-max-rreq 3
+# nodeflate
+lcp-echo-adaptive
+lcp-echo-failure 12
+lcp-echo-interval 5
+ipcp-accept-local
+ipcp-accept-remote
+defaultroute
++ipv6
+ipv6cp-accept-local
+ipv6cp-accept-remote
+defaultroute6
+# usepeerdns
+# plugin winbind.so

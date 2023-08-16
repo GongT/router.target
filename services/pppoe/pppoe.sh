@@ -4,7 +4,7 @@ set -Eeuo pipefail
 
 ip link del ppp0 || true
 
-cp -fr /run/config/lower/. /run/config/middle/. /etc/ppp
+cp -fr /run/config/lower/. /etc/ppp
 
 username=xxxxxxxxxxxx
 password=yyyyyyyyyyyy
@@ -28,11 +28,14 @@ AUTH="\"$username\" * \"$password\""
 echo "$AUTH" >/etc/ppp/chap-secrets
 echo "$AUTH" >/etc/ppp/pap-secrets
 
-cat <<-EOF >>/etc/ppp/peers/isp
+cat <<-EOF >/etc/ppp/peers/isp
 	nic-wan
 	ifname ppp0
 	user "$username"
 	password "$password"
 EOF
+
+logger </etc/ppp/options
+logger </etc/ppp/peers/isp
 
 exec /usr/sbin/pppd call isp

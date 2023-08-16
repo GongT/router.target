@@ -27,8 +27,7 @@ ProtectHome=yes
 
 StateDirectory=pppoe
 
-BindReadOnlyPaths=/etc/ppp:/run/config/lower
-BindReadOnlyPaths=${PWD}/helpers:/run/config/middle
+BindReadOnlyPaths=${PWD}/helpers:/run/config/lower
 BindPaths=${AppDataDir}/pppoe:/run/config/upper
 TemporaryFileSystem=/etc/ppp
 
