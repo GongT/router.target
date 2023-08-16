@@ -19,7 +19,7 @@ ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=yes
 
-BindPaths=${AppDataDir}/dns/core:/etc/coredns
+BindPaths=${AppDataDir}/dns/convert:/etc/coredns
 BindPaths=${DistBinaryDir}/core:/usr/local/bin
 
 Slice=router.slice
