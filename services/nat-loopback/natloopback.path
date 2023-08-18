@@ -1,0 +1,9 @@
+[Unit]
+Description=NAT loopback generator
+
+[Install]
+WantedBy=router.target
+
+[Path]
+PathChanged=/etc/firewalld/policies/ipv4-NAT.xml
+TriggerLimitBurst=0

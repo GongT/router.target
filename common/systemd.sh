@@ -12,10 +12,14 @@ function filter_file() {
 	echo "##### ROUTER GENERATED: source=$SRC"
 }
 
-function systemd_service() {
+function systemd_install() {
 	local -r TARGET="$UNIT_ROOT/$1"
 	filter_file "$1" >"$TARGET"
 	echo "  * systemd unit file: $TARGET"
+}
+
+function systemd_service() {
+	systemd_install "$1"
 	REGISTERD_UNITS+=("$1")
 }
 
