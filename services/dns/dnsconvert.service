@@ -8,7 +8,7 @@ WantedBy=router.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/coredns -conf /etc/coredns/Corefile
+ExecStart="${DistBinaryDir}/core/coredns" -conf "${AppDataDir}/dns/convert/Corefile"
 
 RestartSec=5s
 Restart=on-failure
@@ -18,8 +18,5 @@ PrivateDevices=yes
 ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=yes
-
-BindPaths=${AppDataDir}/dns/convert:/etc/coredns
-BindPaths=${DistBinaryDir}/core:/usr/local/bin
 
 Slice=router.slice

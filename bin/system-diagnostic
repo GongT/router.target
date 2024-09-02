@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+
+set -u
+
+if [[ ${COLUMNS+found} != found ]]; then
+	COLUMNS=$(stty size | awk '{print $2}')
+fi
+
+function percent() {
+	awk -v "x=$1" -v "y=$2" 'BEGIN{printf "%5.2f",100*x/y}'
+}
+function warn() {
+	printf "\x1B[38;5;11m%s\x1B[0m\n" "$*"
+}
+function error() {
+	printf "\x1B[38;5;9m%s\x1B[0m\n" "$*"
+}
+function success() {
+	printf "\x1B[38;5;10m%s\x1B[0m\n" "$*"
+}
+function test_last() {
+	if [[ $? -eq 0 ]]; then
+		success "成功"
+	else
+		error "失败"
+	fi
+	return $?
+}
+
+function header() {
+	local CONTENT="  $*" LINE_LENGTH RIGHT_PAD
+	echo -ne "\n\x1B[1;7m"
+	LINE_LENGTH=$(echo "$CONTENT" | wc -L)
+	RIGHT_PAD=$((COLUMNS - LINE_LENGTH))
+	echo -n "$CONTENT"
+
+	if [[ ${RIGHT_PAD} -gt 0 ]]; then
+		printf "%${RIGHT_PAD}s"
+	fi
+	echo -e "\x1B[0m"
+}
+
+CONNTRACK_CURRENT=$(</proc/sys/net/netfilter/nf_conntrack_count)
+CONNTRACK_MAX=$(</proc/sys/net/netfilter/nf_conntrack_max)
+
+header "基本信息"
+LOAD=$(awk '{print $1}' /proc/loadavg)
+NPROC=$(nproc)
+LOAD_PERCENT=$(percent "$LOAD" "$NPROC")
+echo "1分钟负载: ${LOAD}/${NPROC} [${LOAD_PERCENT}%]"
+if [[ ${LOAD_PERCENT%.*} -gt 70 ]]; then
+	warn "负载过高"
+fi
+
+MEM_TotalKb=$(grep 'MemTotal:' /proc/meminfo | awk '{print $2}')
+MEM_AvailableKb=$(grep 'MemAvailable:' /proc/meminfo | awk '{print $2}')
+MEM_PERCENT=$(percent "${MEM_AvailableKb}" "${MEM_TotalKb}")
+echo "空闲内存: ${MEM_AvailableKb}/${MEM_TotalKb} [${MEM_PERCENT}%]"
+if [[ ${MEM_PERCENT%.*} -lt 20 ]]; then
+	warn "内存不足"
+fi
+
+header "服务"
+SEV_NAMES=(
+	systemd-networkd.service
+	systemd-resolved.service
+	pppoe.service
+	firewalld.service
+	dhcp.service
+	dnsdispatch.service
+	dnsconvert.service
+	dnsproxy.service
+	clash-subscription-processor.service
+	clash.service
+	ddns.timer
+	list-download.timer
+	tlds-download.timer
+	acme-renew.timer
+	natloopback.path
+)
+declare -i ERR=0
+for I in "${SEV_NAMES[@]}"; do
+	if systemctl is-active -q "$I"; then
+		echo -n "$(success "$I ")"
+	else
+		echo -n "$(error "$I ")"
+		ERR+=1
+	fi
+done
+echo ""
+if [[ $ERR -gt 0 ]]; then
+	echo "$ERR 个服务不正常"
+fi
+
+header "网络接口"
+warn "// TODO"
+
+header "Conntrack"
+echo "当前跟踪数量: ${CONNTRACK_CURRENT}"
+echo "最大容量: ${CONNTRACK_MAX}"
+
+CONNTRACK_PERCENT=$(percent "$CONNTRACK_CURRENT" "$CONNTRACK_MAX")
+if [[ ${CONNTRACK_PERCENT%.*} -gt 90 ]]; then
+	error "用量: ${CONNTRACK_PERCENT}% 需要适当提高nf_conntrack_max"
+else
+	echo "用量: ${CONNTRACK_PERCENT}%"
+fi
+
+if [[ $CONNTRACK_CURRENT -gt 20000 ]]; then
+	warn "警告: conntrack表过大，可能存在网络攻击。暂不处理NAT统计。"
+else
+	echo -en "统计conntrack table中……"
+	CONNTRACK_NAT=$(conntrack -L conntrack --any-nat 2>/dev/null | wc -l)
+	printf "\r\x1B[K"
+	echo "NAT链接数: ${CONNTRACK_NAT}"
+fi
+
+header "DNS"
+
+TEST_HOST="www.bing.com"
+echo -n "解析国内地址: "
+resolve-china "$TEST_HOST" | grep -q NOERROR
+test_last
+
+echo -n "解析国外地址: "
+resolve-world "$TEST_HOST" | grep -q NOERROR
+test_last
+
+echo -n "测试DNS分配功能: "
+resolve-dispatch "$TEST_HOST" | grep -q NOERROR
+test_last
+
+echo -n "解析本地地址: "
+RAND_HOST=$(cat /data/AppData/router/dhcp/leases/dhcp.leases | awk '{print $4}' | sed -E '/\*|^$/d' | sort | uniq | sort -R | head -n 1)
+if [[ ! $RAND_HOST ]]; then
+	warn "局域网中似乎没有连接任何设备，无法测试"
+else
+	resolve-dhcp "$RAND_HOST" | grep -q NOERROR
+	test_last
+fi
+
+echo -n "测试systemd-resolved: "
+resolve-systemd "$TEST_HOST" | grep -q NOERROR
+test_last
+
+header "代理"
+PROXY_USE="${PROXY:-${HTTP_PROXY:-""}}"
+if [[ ! $PROXY_USE ]]; then
+	warn "找不到代理设置"
+else
+	echo -n "通过代理服务器访问 www.google.com: "
+	curl --head --proxy "$PROXY_USE" https://www.google.com &>/dev/null
+	test_last
+fi

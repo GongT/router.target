@@ -4,7 +4,7 @@ Description=check ip change, and run ddns
 [Service]
 Type=oneshot
 RemainAfterExit=no
-ExecStart=/bin/bash "${LocalConfigDir}/ddns/run.sh"
+ExecStart=/bin/bash "${__dirname}/run.sh"
 StateDirectory=ddns
 EnvironmentFile=${AppDataDir}/ddns/config.sh
 

@@ -4,5 +4,5 @@ Description=Linux Router
 [Install]
 
 [Slice]
-CPUWeight=800
-
+CPUWeight=100
+CPUQuota=60%

@@ -8,18 +8,18 @@ log-level: warn
 external-controller: 0.0.0.0:46667
 # interface-name: ppp0
 
-# dns:
+dns:
 #   enabled: true
 #   listen: 0.0.0.0:18896
 #   #  enhanced-mode: fake-ip
-#   default-nameserver:
-#     - tls://1.12.12.12
+   default-nameserver:
+     - tcp://[::1]:5300
 #     - tls://120.53.53.53
 #     - tls://223.5.5.5
 #     - tls://223.6.6.6 
 
-#   nameserver:
-#     - tls://cloudflare-dns.com:853
+   nameserver:
+     - tcp://[::1]:5300
 #     - tls://dns.quad9.net:853
 #     - tls://dns.google:853
 #     - tls://dns.adguard.com:853

@@ -1,2 +1,2 @@
-systemd_install natloopback.service
-systemd_service natloopback.path
+systemd_add_unit natloopback.service
+systemd_add_unit natloopback.path

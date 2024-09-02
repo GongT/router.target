@@ -1,1 +1,1 @@
-systemd_service pppoe.service
+systemd_add_unit pppoe.service

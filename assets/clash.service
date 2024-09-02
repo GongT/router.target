@@ -9,8 +9,8 @@ WantedBy=router.target
 Type=simple
 ExecStart=/usr/local/bin/clash -d /etc/clash -ext-ui /etc/clash/yacd
 
-RestartSec=5s
-Restart=on-failure
+RestartSec=10s
+Restart=always
 
 ProtectSystem=strict
 PrivateDevices=yes

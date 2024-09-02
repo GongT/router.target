@@ -9,7 +9,7 @@ Conflicts=dnsmasq.service
 WantedBy=router.target
 
 [Service]
-ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf
+ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf --hostsdir $STATE_DIRECTORY
 Type=simple
 
 RestartSec=5s
@@ -20,8 +20,10 @@ PrivateDevices=yes
 ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=yes
+StateDirectory=wireguard
 
 InaccessiblePaths=/data /etc/dnsmasq.conf
 BindPaths=${PWD}/config:/etc/dnsmasq.d
+BindPaths=${AppDataDir}/dns/wireguard:/etc/dnsmasq.d/dynamic
 
 Slice=router.slice

@@ -1,0 +1,15 @@
+[Unit]
+Description=download gfwlist/chnlist/...
+StartLimitBurst=100
+StartLimitIntervalSec=5s
+
+[Service]
+ExecStart=/usr/bin/bash "${__dirname}/download-all.sh"
+StateDirectory=lists
+RemainAfterExit=no
+Type=oneshot
+Restart=on-failure
+TimeoutStartSec=infinity
+RestartSec=10s
+
+Slice=router.slice

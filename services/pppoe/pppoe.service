@@ -1,6 +1,6 @@
 [Unit]
 Description=PPPoE
-Wants=systemd-networkd.service
+Wants=systemd-networkd.service firewalld.service
 # After=systemd-networkd.service
 
 [Install]

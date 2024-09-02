@@ -1,0 +1,29 @@
+[Unit]
+Description=DNS dispathing server on 5300
+Requires=systemd-resolved.service
+After=systemd-resolved.service
+
+[Install]
+WantedBy=router.target
+
+[Service]
+Environment=AppDataDir="${AppDataDir}" ROOT_DIR="${ROOT_DIR}"
+ExecStartPre=+/usr/bin/bash "${__dirname}/prestart.sh"
+ExecStart="${ROOT_DIR}/dist/chinadns-ng" --config "${STATE_DIRECTORY}/chinadns-config"
+Type=simple
+
+RestartSec=5s
+Restart=on-failure
+
+ProtectSystem=strict
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+PrivateTmp=yes
+
+StateDirectory=dnsdispatch
+InaccessiblePaths=/etc/dnsmasq.conf /etc/dnsmasq.d
+
+Slice=router.slice

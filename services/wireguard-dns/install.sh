@@ -1,1 +1,1 @@
-systemd_service wireguard-dns.service
+systemd_add_unit wireguard-dns.service

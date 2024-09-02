@@ -1,26 +1,25 @@
 REGISTERD_UNITS=()
 
-function filter_file() {
-	local SRC="$1"
-	DATA=$(<"$SRC")
+function systemd_add_unit() {
+	local INSTALL_NAME SOURCE
+	INSTALL_NAME="$(basename "$1")"
 
-	echo "$DATA" \
-		| sed -s "s#\\\${DistBinaryDir}#$DIST_ROOT#g" \
-		| sed -s "s#\\\${PWD}#$(pwd)#g" \
-		| sed -s "s#\\\${AppDataDir}#${AppDataDir}#g; s#\\\${LocalConfigDir}#${LocalConfigDir}#g"
-	echo ""
-	echo "##### ROUTER GENERATED: source=$SRC"
-}
+	local -r TARGET="$UNIT_ROOT/$INSTALL_NAME"
+	if [[ ${2+found} == found ]]; then
+		SOURCE="$2"
+	elif [[ -e $1 ]]; then
+		SOURCE="$1"
+	else
+		die "missing systemd unit file"
+	fi
 
-function systemd_install() {
-	local -r TARGET="$UNIT_ROOT/$1"
-	filter_file "$1" >"$TARGET"
-	echo "  * systemd unit file: $TARGET"
-}
+	if [[ $SOURCE == *.service ]] && ! grep -qF "Slice=router.slice" "$SOURCE"; then
+		die "missing Slice= in $SOURCE"
+	fi
 
-function systemd_service() {
-	systemd_install "$1"
-	REGISTERD_UNITS+=("$1")
+	filter_file "$SOURCE" >"$TARGET"
+	echo "  * systemd unit file: $(basename "$SOURCE") -> $TARGET"
+	REGISTERD_UNITS+=("$INSTALL_NAME")
 }
 
 function systemd_override() {
@@ -34,7 +33,7 @@ function install_script() {
 	local F=$1 INIT_CWD
 	INIT_CWD=$(dirname "$F")
 
-	echo "Installing $INIT_CWD:"
+	echo "Installing $(basename "$INIT_CWD"):"
 	pushd "$(dirname "$F")" &>/dev/null
 	# shellcheck source=/dev/null
 	source install.sh

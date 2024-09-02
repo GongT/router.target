@@ -1,0 +1,29 @@
+bind-addr 127.0.0.1
+bind-port 5300
+
+china-dns tcp://::1#8806
+trust-dns tcp://::1#8805
+
+chnlist-file /var/lib/lists/chnlist.txt
+chnlist-file ${AppDataDir}/dns/dispatch/force.china.list
+gfwlist-file /var/lib/lists/gfwlist.txt
+chnlist-file ${AppDataDir}/dns/dispatch/force.oversea.list
+
+add-tagchn-ip
+ipset-name4 inet@global@chnip4
+ipset-name6 inet@global@chnip6
+add-taggfw-ip inet@global@gfwip4,inet@global@gfwip6
+
+timeout-sec 10
+
+cache 0
+
+verdict-cache 60000
+verdict-cache-db ${AppDataDir}/dns/dispatch/verdict-cache-db
+
+hosts ${ROOT_DIR}/config/chinadns-ng/hosts
+hosts ${AppDataDir}/dns/dispatch/hosts
+
+# verbose
+
+config ${AppDataDir}/dns/dispatch/config

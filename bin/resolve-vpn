@@ -2,5 +2,5 @@
 
 PORT=5356
 
-set -x
-dig @::1 -p "$PORT" "$@"
+[[ -t 1 ]] && set -x
+exec dig @::1 -p "$PORT" "$@"

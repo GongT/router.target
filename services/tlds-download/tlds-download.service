@@ -1,0 +1,10 @@
+[Unit]
+Description=download tlds from iana
+
+[Service]
+ExecStart=/usr/bin/bash "${PWD}/execute.sh"
+StateDirectory=tlds
+RemainAfterExit=no
+Type=oneshot
+
+Slice=router.slice

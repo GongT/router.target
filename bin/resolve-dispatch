@@ -2,5 +2,5 @@
 
 PORT=5300
 
-set -x
-dig @127.0.0.1 -p "$PORT" "$@"
+[[ -t 1 ]] && set -x
+exec dig +retry=10 @127.0.0.1 -p "$PORT" "$@"

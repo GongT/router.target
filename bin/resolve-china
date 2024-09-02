@@ -2,5 +2,5 @@
 
 PORT=8806
 
-set -x
-dig @::1 -p "$PORT" "$@"
+[[ -t 1 ]] && set -x
+exec dig +retry=10 @::1 -p "$PORT" "$@"

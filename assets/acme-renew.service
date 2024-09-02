@@ -18,4 +18,4 @@ ReadWritePaths=/root/.acme.sh
 ReadWritePaths=${AppDataDir}/ACME
 
 Slice=router.slice
-CPUWeight=90
+CPUWeight=idle

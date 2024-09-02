@@ -1,5 +1,5 @@
 [Unit]
-Description=NAT loopback generator
+Description=NAT loopback rule generator (trigger by pppoe and path-watch)
 PartOf=pppoe.service
 # After=systemd-networkd.service
 StartLimitIntervalSec=5s

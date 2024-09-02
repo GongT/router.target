@@ -1,0 +1,4 @@
+10.0.0.1 proxy-server
+fc00::1 proxy-server
+10.0.0.1 router
+fc00::1 router

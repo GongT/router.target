@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -Eeuo pipefail
+
+# shellcheck source=common/fn.sh
 source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/common/fn.sh"
 
 if [[ -L .config ]]; then
@@ -37,4 +40,6 @@ for F in "${FILES[@]}"; do
 done
 
 systemctl daemon-reload
+
+## enable all (no [install] will be ignore)
 systemctl enable "${NAMES[@]}" "${REGISTERD_UNITS[@]}"

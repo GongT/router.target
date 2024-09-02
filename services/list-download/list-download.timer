@@ -1,0 +1,9 @@
+[Unit]
+Description=download list files every week
+
+[Timer]
+OnCalendar=weekly
+OnBootSec=5min
+
+[Install]
+WantedBy=timers.target
