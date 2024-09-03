@@ -1,0 +1,83 @@
+{
+	"log": {
+		"access": "/var/log/v2ray/access.log",
+		"error": "/var/log/v2ray/error.log",
+		"loglevel": "warning"
+	},
+	"dns": {
+		"servers": []
+	},
+	"policy": {
+		"levels": {
+			"0": {
+				"handshake": 4,
+				"connIdle": 300,
+				"uplinkOnly": 2,
+				"downlinkOnly": 5,
+				"statsUserUplink": true,
+				"statsUserDownlink": true,
+				"bufferSize": 10240
+			}
+		},
+		"system": {
+			"statsInboundUplink": true,
+			"statsInboundDownlink": true
+		}
+	},
+	"outbounds": [
+		{
+			"tag": "out.direct",
+			"protocol": "freedom",
+			"settings": {
+				"domainStrategy": "AsIs"
+			}
+		},
+		{
+			"tag": "out.deny",
+			"protocol": "blackhole"
+		}
+	],
+	"inbounds": [
+		{
+			"tag": "in.http",
+			"port": 3271,
+			"listen": "0.0.0.0",
+			"protocol": "http",
+			"settings": {
+				"timeout": 5,
+				"allowTransparent": false,
+				"userLevel": 0
+			},
+			"allocate": {
+				"strategy": "always"
+			}
+		},
+		{
+			"tag": "in.socks",
+			"port": 3272,
+			"listen": "0.0.0.0",
+			"protocol": "socks",
+			"settings": {
+				"auth": "noauth",
+				"udp": true,
+				"userLevel": 0
+			},
+			"allocate": {
+				"strategy": "always"
+			}
+		}
+	],
+	"stats": {},
+	"routing": {
+		"strategy": "rules",
+		"rules": [
+			{
+				"tag": "rule.fallthru",
+				"_priority": 65535,
+				"type": "field",
+				"network": "tcp,udp",
+				"outboundTag": "out.deny"
+			}
+		]
+	}
+}

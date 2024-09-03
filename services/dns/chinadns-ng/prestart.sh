@@ -22,6 +22,7 @@ ensure "hosts"
 ensure "config"
 ensure "force.china.list"
 ensure "force.oversea.list"
+ensure "blacklist.list"
 
 echo "[prestart] update nftables"
 nft add table inet global

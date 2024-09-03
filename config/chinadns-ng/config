@@ -9,6 +9,10 @@ chnlist-file ${AppDataDir}/dns/dispatch/force.china.list
 gfwlist-file /var/lib/lists/gfwlist.txt
 chnlist-file ${AppDataDir}/dns/dispatch/force.oversea.list
 
+group blacklist
+group-dnl ${AppDataDir}/dns/dispatch/blacklist.list
+group-upstream tcp://::1#8807
+
 add-tagchn-ip
 ipset-name4 inet@global@chnip4
 ipset-name6 inet@global@chnip6

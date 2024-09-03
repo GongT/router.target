@@ -1,0 +1,25 @@
+[Unit]
+Description=update subscription file for v2ray
+After=network-online.target pppoe.service systemd-resolved.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash "${__dirname}/subscription/update-subscription.sh"
+
+Environment="INPUT_FILE=${AppDataDir}/proxy/subscription.txt"
+WorkingDirectory=/var/lib/v2ray
+
+RestartSec=10s
+Restart=on-failure
+RestartPreventExitStatus=66
+
+ProtectSystem=strict
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+PrivateTmp=yes
+
+StateDirectory=v2ray
+
+Slice=router.slice
