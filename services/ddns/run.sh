@@ -62,7 +62,7 @@ function ddns_script() {
 	if [[ $ret != 'true' ]]; then
 		die "failed update"
 	else
-		echo "successfull update"
+		pecho "successfull update"
 	fi
 
 	pecho "update done."
