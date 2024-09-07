@@ -6,8 +6,4 @@
 
 ### Install
 
-```bash
-cd /where/you/want/to/place/everything
-git clone https://github.com/gongt/router.target
-sudo ./install.sh
-```
+you can pick up some scripts from here, but you should not run `install.sh` directly.
