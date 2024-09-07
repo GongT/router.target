@@ -1,5 +1,7 @@
 [Unit]
 Description=run ddns every 1 min
+After=pppoe.service systemd-resolved.service
+Requires=pppoe.service
 
 [Install]
 WantedBy=router.target
@@ -7,4 +9,3 @@ WantedBy=router.target
 [Timer]
 OnUnitInactiveSec=1min
 OnBootSec=30s
-

@@ -26,20 +26,45 @@ function x() {
 
 function die() {
 	pecho "\e[38;5;9m$*\e[0m"
-	exit 1
+	exit 66
 }
 
 function ddns_script() {
+	local NET_TYPE=$1 IP_ADDR=$2 TYPE BODY
+
+	if [[ $NET_TYPE == 6 ]]; then
+		TYPE=AAAA
+	else
+		TYPE=A
+	fi
+
+	local RECORD_ID_NAME="CF_RECORD_ID$NET_TYPE"
+	local RECORD_ID=${!RECORD_ID_NAME}
+
+	BODY=$(
+		jq -n '{"type":$TYPE,"name":$HOST_NAME,"content":$IP_ADDR,"ttl":300,"proxied":false,"comment":"DDNS@router"}' \
+			--arg TYPE "$TYPE" \
+			--arg IP_ADDR "$IP_ADDR" \
+			--arg HOST_NAME "$HOST_NAME"
+	)
+
 	pecho "request update api..."
-	while true; do
-		sleep 1
-		if x /usr/bin/curl --no-progress-meter "-$NET_TYPE" "https://dyn.dns.he.net/nic/update" \
-			-d "hostname=${DDNS_HOST}" \
-			-d "password=${DDNS_KEY}"; then
-			break
-		fi
-	done
-	pecho ""
+	x curl --no-progress-meter -X PUT "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records/${RECORD_ID}" \
+		-H "Authorization: Bearer ${CF_TOKEN}" \
+		-H "Content-Type: application/json" \
+		--data "$BODY" \
+		--output "$RUNTIME_DIRECTORY/output.json"
+
+	jq '.' "$RUNTIME_DIRECTORY/output.json"
+
+	local ret
+	ret=$(jq '.success' "$RUNTIME_DIRECTORY/output.json")
+	if [[ $ret != 'true' ]]; then
+		die "failed update"
+	else
+		echo "successfull update"
+	fi
+
 	pecho "update done."
 }
 
@@ -70,6 +95,7 @@ function save() {
 }
 
 echo "STATE_DIRECTORY=$STATE_DIRECTORY"
+echo "RUNTIME_DIRECTORY=$RUNTIME_DIRECTORY"
 cd "$STATE_DIRECTORY"
 load
 
@@ -89,7 +115,7 @@ if [[ $IP == "$IPV4" ]] && [[ $LASTUPDATE4 -gt $FORCE_TS ]]; then
 else
 	pecho "address change from ${IPV4-} to $IP"
 
-	ddns_script 4
+	ddns_script 4 "$IP"
 
 	IPV4=$IP
 	LASTUPDATE4=$(date +%s)
@@ -113,7 +139,7 @@ if [[ $IP == "$IPV6" ]] && [[ $LASTUPDATE4 -gt $FORCE_TS ]]; then
 else
 	pecho "address change from ${IPV6-} to $IP"
 
-	ddns_script 6
+	ddns_script 6 "$IP"
 
 	IPV6=$IP
 	LASTUPDATE6=$(date +%s)

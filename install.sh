@@ -18,7 +18,7 @@ PROFILE
 
 NAMES=()
 declare -xr DistBinaryDir="$ROOT_DIR/dist"
-for F in assets/*.timer assets/*.service assets/*.target assets/*.mount; do
+for F in assets/*.service assets/*.target assets/*.mount; do
 	SRC="$ROOT_DIR/$F"
 	name=$(basename "$SRC")
 	DIST="$UNIT_ROOT/$name"

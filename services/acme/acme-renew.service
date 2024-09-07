@@ -1,12 +1,15 @@
 [Unit]
 Description=auto check and renew ssl certs every day
+StartLimitBurst=5
+StartLimitIntervalSec=1hour
 
 [Service]
 Type=oneshot
 RemainAfterExit=no
-Environment=NO_TIMESTAMP=1
-ExecStart=/root/.acme.sh/acme.sh --home "/root/.acme.sh" --upgrade
-ExecStart=/root/.acme.sh/acme.sh --cron --debug --home "/root/.acme.sh" --config-home "${AppDataDir}/ACME/"
+Environment=NO_TIMESTAMP=1 "ROOT_DIR=${ROOT_DIR}"
+ExecStart=/usr/bin/bash "${__dirname}/execute.sh"
+RestartPreventExitStatus=66
+Restart=on-failure
 
 ProtectSystem=strict
 PrivateDevices=yes
@@ -14,8 +17,8 @@ ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=read-only
 
-ReadWritePaths=/root/.acme.sh
 ReadWritePaths=${AppDataDir}/ACME
+WorkingDirectory=${AppDataDir}/ACME
 
 Slice=router.slice
 CPUWeight=idle

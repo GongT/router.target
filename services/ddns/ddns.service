@@ -1,12 +1,19 @@
 [Unit]
 Description=check ip change, and run ddns
+StartLimitBurst=5
+StartLimitIntervalSec=30min
 
 [Service]
 Type=oneshot
 RemainAfterExit=no
 ExecStart=/bin/bash "${__dirname}/run.sh"
-StateDirectory=ddns
 EnvironmentFile=${AppDataDir}/ddns/config.sh
 
+RestartPreventExitStatus=66
+Restart=on-failure
+RestartSec=30s
+
+StateDirectory=ddns
+RuntimeDirectory=ddns
 Slice=router.slice
 CPUWeight=90
