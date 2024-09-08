@@ -6,7 +6,7 @@ After=network-online.target pppoe.service systemd-resolved.service clash-subscri
 WantedBy=router.target
 
 [Service]
-Type=simple
+Type=exec
 ExecStart="${DistBinaryDir}/clash/bin/clash" -d "${LocalConfigDir}/clash" -ext-ui "${DistBinaryDir}/clash/yacd/public"
 
 RestartSec=5s

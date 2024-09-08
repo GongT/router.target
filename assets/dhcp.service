@@ -9,7 +9,7 @@ WantedBy=router.target
 [Service]
 ExecStartPre=/usr/sbin/ip addr
 ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf
-Type=simple
+Type=exec
 
 RestartSec=5s
 Restart=on-failure

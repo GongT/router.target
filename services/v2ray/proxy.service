@@ -7,7 +7,7 @@ Requires=v2ray-subscription-update.service
 WantedBy=router.target
 
 [Service]
-Type=simple
+Type=exec
 Environment="AppDataDir=${AppDataDir}" "ROOT_DIR=${ROOT_DIR}"
 ExecStart=/usr/bin/bash "${__dirname}/config/create-config-and-start.sh"
 WorkingDirectory=/var/lib/v2ray

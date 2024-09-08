@@ -14,7 +14,7 @@ ExecStart=/usr/sbin/dnsmasq --keep-in-foreground \
 	"--conf-dir=${LocalConfigDir}/dnsdispatch,*.conf" \
 	"--conf-dir=${AppDataDir}/dns/dispatch,*.conf" \
 	"--hostsdir=${AppDataDir}/dns/dispatch/hosts"
-Type=simple
+Type=exec
 
 RestartSec=5s
 Restart=on-failure

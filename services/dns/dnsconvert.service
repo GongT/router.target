@@ -7,7 +7,7 @@ Wants=dnsdispatch.service dnsproxy.service
 WantedBy=router.target
 
 [Service]
-Type=simple
+Type=exec
 ExecStart="${DistBinaryDir}/core/coredns" -conf "${AppDataDir}/dns/convert/Corefile"
 
 RestartSec=5s

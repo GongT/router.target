@@ -10,7 +10,7 @@ WantedBy=router.target
 
 [Service]
 ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf --hostsdir $STATE_DIRECTORY
-Type=simple
+Type=exec
 
 RestartSec=5s
 Restart=on-failure
