@@ -11,5 +11,6 @@
 	"python.analysis.exclude": [
 		"**/.*",
 		".config"
-	]
+	],
+	"remote.autoForwardPorts": false
 }

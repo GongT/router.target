@@ -3,3 +3,5 @@ dist
 .config
 *.log
 .local
+__pycache__
+*.pyc

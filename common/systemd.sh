@@ -4,6 +4,8 @@ function systemd_add_unit() {
 	local INSTALL_NAME SOURCE
 	INSTALL_NAME="$(basename "$1")"
 
+	rm -f "/usr/lib/systemd/system/$INSTALL_NAME"
+
 	local -r TARGET="$UNIT_ROOT/$INSTALL_NAME"
 	if [[ ${2+found} == found ]]; then
 		SOURCE="$2"
@@ -23,8 +25,8 @@ function systemd_add_unit() {
 }
 
 function systemd_override() {
-	local -r SOURCE=$2 TARGET="/etc/systemd/system/$1.d/router-override.conf"
-	mkdir -p "/etc/systemd/system/$1.d"
+	local -r SOURCE=$2 TARGET="$UNIT_ROOT/$1.d/router-override.conf"
+	mkdir -p "$UNIT_ROOT/$1.d"
 	echo "  * systemd override file: $TARGET"
 	filter_file "$SOURCE" >"$TARGET"
 }

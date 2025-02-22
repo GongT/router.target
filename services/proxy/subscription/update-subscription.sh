@@ -25,7 +25,7 @@ function without_proxy() {
 		"$@"
 }
 
-if [[ -z ${STATE_DIRECTORY-} ]]; then
+if [[ -z ${INPUT_FILE-} ]]; then
 	export INPUT_FILE="/data/AppData/router/proxy/subscription.txt"
 fi
 
@@ -109,7 +109,6 @@ while read -r LINE; do
 	write_if_change "${fname}.txt" "$DATA"
 done <"$INPUT_FILE"
 
-if [[ $SOME_CHANGED -eq 1 ]]; then
-	echo "request proxy service to restart!"
-	systemctl restart --no-block proxy.service || true
+if [[ $SOME_CHANGED -eq 1 ]] || [[ ! -f ../subscription-updated ]]; then
+	touch ../subscription-updated
 fi

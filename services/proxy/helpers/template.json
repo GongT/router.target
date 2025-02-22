@@ -1,0 +1,194 @@
+{
+	"log": {
+		"disabled": false,
+		"level": "debug",
+		"timestamp": false
+	},
+	"dns": {
+		"servers": [
+			{
+				"type": "udp",
+				"tag": "dns.default",
+				"server": "::1",
+				"server_port": 53,
+				"detour": "out.direct"
+			},
+			{
+				"type": "udp",
+				"tag": "dns.direct",
+				"server": "::1",
+				"server_port": 5305,
+				"detour": "out.direct"
+			},
+			{
+				"type": "udp",
+				"tag": "dns.proxy",
+				"server": "::1",
+				"server_port": 5306,
+				"detour": "out.direct"
+			}
+		],
+		"rules": [],
+		"final": "dns.default",
+		"strategy": "prefer_ipv6",
+		"disable_cache": false,
+		"disable_expire": false,
+		"independent_cache": false,
+		"cache_capacity": 3000,
+		"reverse_mapping": true,
+		// "client_subnet": "",
+		"fakeip": {}
+	},
+	"ntp": {
+		"enabled": false
+	},
+	"endpoints": [],
+	"inbounds": [
+		{
+			"type": "mixed",
+			"tag": "in.default",
+			"listen": "::",
+			"listen_port": 3271,
+			"tcp_fast_open": true,
+			"tcp_multi_path": true,
+			"udp_fragment": true
+		}
+	],
+	"outbounds": [
+		{
+			"type": "direct",
+			"tag": "out.direct"
+		},
+		{
+			"type": "selector",
+			"tag": "out.select",
+			"outbounds": [],
+			"interrupt_exist_connections": true
+		},
+		{
+			"type": "selector",
+			"tag": "out.manual",
+			"outbounds": [],
+			"interrupt_exist_connections": true
+		},
+		{
+			"type": "urltest",
+			"tag": "out.auto",
+			"outbounds": [],
+			"url": "https://www.gstatic.com/generate_204",
+			"interval": "5m",
+			"tolerance": 50,
+			"idle_timeout": "30m",
+			"interrupt_exist_connections": false
+		},
+		{
+			"type": "selector",
+			"tag": "out.global",
+			"outbounds": [
+				"out.auto",
+				"out.select",
+				"out.direct"
+			],
+			"default": "out.auto",
+			"interrupt_exist_connections": true
+		}
+	],
+	"route": {
+		"rules": [
+			// 跳过各种私有地址
+			{
+				"ip_is_private": true,
+				"action": "route",
+				"outbound": "out.direct"
+			},
+			{
+				"rule_set": [
+					"ruleset.my-blacklist"
+				],
+				"action": "reject",
+				"method": "default",
+				"no_drop": true
+			},
+			{
+				"rule_set": [
+					"ruleset.my-force"
+				],
+				"action": "route",
+				"outbound": "out.global"
+			},
+			{
+				"rule_set": [
+					// "ruleset.geoip-cn",
+					// "ruleset.geosite-cn",
+					"ruleset.my-direct"
+				],
+				"action": "route",
+				"outbound": "out.direct"
+			},
+			{
+				"action": "route",
+				"outbound": "out.global"
+			},
+			{
+				"action": "reject",
+				"method": "default",
+				"no_drop": true
+			}
+		],
+		"rule_set": [
+			// {
+			// 	"tag": "ruleset.geoip-cn",
+			// 	"type": "remote",
+			// 	"format": "binary",
+			// 	"url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+			// 	"download_detour": "out.auto"
+			// },
+			// {
+			// 	"tag": "ruleset.geosite-cn",
+			// 	"type": "remote",
+			// 	"format": "binary",
+			// 	"url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
+			// 	"download_detour": "out.auto"
+			// },
+			{
+				"tag": "ruleset.my-force",
+				"type": "local",
+				"format": "source",
+				"path": "my-rules/force.json"
+			},
+			{
+				"tag": "ruleset.my-direct",
+				"type": "local",
+				"format": "source",
+				"path": "my-rules/direct.json"
+			},
+			{
+				"tag": "ruleset.my-blacklist",
+				"type": "local",
+				"format": "source",
+				"path": "my-rules/blacklist.json"
+			},
+		],
+		"final": "out.global",
+		"auto_detect_interface": false,
+		"default_interface": "ppp0",
+		"default_mark": 66
+	},
+	"experimental": {
+		"cache_file": {
+			"enabled": true,
+			"path": "cache.db",
+			"store_fakeip": true,
+			"store_rdrc": true,
+			"rdrc_timeout": "1d"
+		},
+		"clash_api": {
+			"external_controller": "[::]:3280",
+			"external_ui": "ui",
+			"external_ui_download_url": "https://github.com/MetaCubeX/Yacd-meta/archive/gh-pages.zip",
+			"external_ui_download_detour": "out.auto",
+			"secret": "05ab516b88ae",
+			"default_mode": "Rule"
+		}
+	}
+}

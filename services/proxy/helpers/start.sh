@@ -14,25 +14,18 @@ export CONFIG_FILE="${STATE_DIRECTORY}/subscription.json"
 BINARY="${ROOT_DIR:-/opt}/dist/sing-box"
 APP_CONFIG="${ROOT_DIR:-/opt}/services/sing-box/config/config.json"
 
-rm -rf tmp/subscriptions
-mkdir -p tmp/subscriptions
-find "${STATE_DIRECTORY}/subscriptions" -type f -print | while read -r SUB_FILE; do
-	echo "convert file: ${SUB_FILE}"
-	BASE=$(basename "${SUB_FILE}" .txt)
-	OUT="${STATE_DIRECTORY}/tmp/subscriptions/${BASE}.json"
-	"${BINARY}" parse "${SUB_FILE}" --output "${OUT}" >/dev/null
-	echo "  - ${OUT}"
-done
-
 echo ""
 echo "creating config file: ${CONFIG_FILE}"
 function create_cfg() {
-	python3 "${__dirname}/subscription-filter.py" "${CONFIG_FILE}"
+	python3 "${__dirname}/create-config-file.py" "${CONFIG_FILE}"
+	python3 "${__dirname}/convert-user-lists.py"
 }
 
-if ! create_cfg 2>/dev/null; then
+if ! create_cfg &>/dev/null; then
 	create_cfg || true
+
+	echo "!!!failed generate config file!!!"
 	exit 66
 fi
 
-# exec "${BINARY}" --directory "${STATE_DIRECTORY}" --config-directory "${CONFIG_FILE}" run --hiddify "${APP_CONFIG}"
+exec "${BINARY}" --directory "${STATE_DIRECTORY}" --config "${CONFIG_FILE}" run
