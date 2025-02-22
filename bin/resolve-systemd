@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
+set -Eeu
 
 NS=$(cat /var/run/systemd/resolve/stub-resolv.conf | grep '^nameserver' | sed 's/nameserver //' | head -n1)
 
 if [[ ! $NS ]]; then
-	echo "no nameserver in stub-resolv.conf." >&2
+	echo "no nameserver in stub-resolv.conf" >&2
 	exit 1
 fi
-[[ -t 1 ]] && set -x
+if [[ -t 0 ]]; then
+	set -x
+fi
 exec dig "@$NS" "$@"

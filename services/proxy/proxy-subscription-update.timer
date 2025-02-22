@@ -1,0 +1,10 @@
+[Unit]
+Description=update subscription every hour
+After=network-online.target pppoe.service systemd-resolved.service
+
+[Install]
+WantedBy=timers.target
+
+[Timer]
+OnBootSec=30s
+OnCalendar=hourly

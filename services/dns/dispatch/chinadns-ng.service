@@ -9,6 +9,7 @@ WantedBy=router.target
 [Service]
 Environment=AppDataDir="${AppDataDir}" ROOT_DIR="${ROOT_DIR}"
 ExecStartPre=+/usr/bin/bash "${__dirname}/prestart.sh"
+ExecStopPost=+/usr/bin/bash "${__dirname}/poststop.sh"
 ExecStart="${ROOT_DIR}/dist/chinadns-ng" --config "${STATE_DIRECTORY}/chinadns-config"
 Type=exec
 
@@ -24,6 +25,6 @@ ProtectHome=yes
 PrivateTmp=yes
 
 StateDirectory=dnsdispatch
-InaccessiblePaths=/etc/dnsmasq.conf /etc/dnsmasq.d
+InaccessiblePaths=/etc
 
 Slice=router.slice

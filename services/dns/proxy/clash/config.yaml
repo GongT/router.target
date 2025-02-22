@@ -51,12 +51,12 @@ proxy-providers:
 
 
 tunnels:
-  - tcp/udp,[::1]:28842,208.67.222.222:53,fastest
-  - tcp/udp,[::1]:28843,1.1.1.1:53,fastest
-  - tcp/udp,[::1]:28844,8.8.8.8:53,fastest
-  - tcp/udp,[::1]:28845,9.9.9.9:53,fastest
-  - tcp/udp,[::1]:28846,64.6.64.6:53,fastest
-  - tcp/udp,[::1]:28847,74.82.42.42:53,fastest
+  - tcp/udp,[::1]:5342,208.67.222.222:53,fastest
+  - tcp/udp,[::1]:5343,1.1.1.1:53,fastest
+  - tcp/udp,[::1]:5344,8.8.8.8:53,fastest
+  - tcp/udp,[::1]:5345,9.9.9.9:53,fastest
+  - tcp/udp,[::1]:5346,64.6.64.6:53,fastest
+  - tcp/udp,[::1]:5347,74.82.42.42:53,fastest
 
 rules:
   - MATCH,fastest

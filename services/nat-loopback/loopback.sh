@@ -15,8 +15,10 @@ for L in "${LINES[@]}"; do
 done
 
 handle() {
-	local DATA OLD_DATA FILE="$1"
-	OLD_DATA=$(<"/etc/firewalld/policies/$FILE.xml")
+	local DATA OLD_DATA='' FILE="$1" FPATH="/etc/firewalld/policies/$1.xml"
+	if [[ -e $FPATH ]]; then
+		OLD_DATA=$(<"$FPATH")
+	fi
 	DATA+="$(echo "$OLD_DATA" | sed '/<rule/,/<\/rule>/d' | head -n-1)"
 	DATA+=$'\n\n'
 	DATA+="$RULES"
@@ -29,11 +31,15 @@ handle() {
 
 	CHANGE=yes
 
-	local OLD_FILE="/etc/firewalld/policies/$FILE.xml.old" NEW_FILE="/etc/firewalld/policies/$FILE.xml"
+	local OLD_FILE="/etc/firewalld/policies/$FILE.xml.old"
 	echo "$FILE file changed"
 	rm -f "$OLD_FILE"
-	mv "$NEW_FILE" "$OLD_FILE"
-	echo "$DATA" >"$NEW_FILE"
+
+	if [[ -e $FPATH ]]; then
+		mv "$FPATH" "$OLD_FILE"
+	fi
+
+	echo "$DATA" >"$FPATH"
 }
 
 handle ipv4-loopback-1

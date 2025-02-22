@@ -1,0 +1,29 @@
+[Unit]
+Description=DNS caching server on port 53
+Before=nss-lookup.target
+Wants=nss-lookup.target
+After=network.target
+; Use bind-dynamic or uncomment following to listen on non-local IP address
+;After=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+Alias=dnscache.service
+Alias=dnsmasq.service
+
+[Service]
+ExecStart=/usr/sbin/dnsmasq --keep-in-foreground --conf-file=${__dirname}/dnsmasq.conf --conf-dir=/etc/dnsmasq.d,*.conf
+Type=exec
+
+Slice=router.slice
+
+ProtectSystem=strict
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+PrivateTmp=yes
+
+RestartSec=5s
+Restart=on-failure

@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 from os import environ, path
 from sys import stderr
+import idna
+import traceback
 import urllib.parse
 import base64
 
@@ -114,7 +116,13 @@ def parse_vmess_url(link: LinkObj, data: str):
     if blen % 4 > 0:
         data += "=" * (4 - blen % 4)
 
-    text = base64.b64decode(data).decode()
+    try:
+        text = base64.b64decode(data).decode()
+    except:
+        print("==================================")
+        print(data)
+        print("==================================")
+        raise
     body = json.loads(text)
 
     for i in link:
@@ -177,18 +185,21 @@ def make_outbound(protocol):
     return outbound
 
 
-def new_shadowsocks(title: str, link: dict):
-    l = dict(link)
+def new_shadowsocks(title: str, _link: dict):
+    link = dict(_link)
+    take(link, "v")
+    take(link, "ps")
+    take(link, "protocol")
     ss_server = {
-        "email": take(link, "ps") + "@ss",
+        # "email": take(link, "ps") + "@ss",
         "address": take(link, "add"),
         "method": take(link, "aid"),
         "ota": False,
         "password": take(link, "id"),
         "port": int(take(link, "port")),
     }
-    if not dict_empty(l):
-        die("未知字段: " + ", ".join(l.keys()) + "\nURL: " + dump_json(link, None))
+    if not dict_empty(link):
+        note("未知字段: " + ", ".join(link.keys()) + "\nURL: " + dump_json(_link, None))
 
     create_outbound("shadowsocks", title)["settings"]["servers"].append(ss_server)
     used_domains.add(ss_server["address"])
@@ -293,13 +304,13 @@ def new_vmess(title: str, link):
 ########################
 def process_line(title: str, line: str):
     ln = parse_url(line)
-    if not ln["v"] or int(ln["v"]) != 2:
-        note("ignore invalid link: URL: " + dump_json(ln, None))
-        return
 
     if ln["protocol"] == "ss":
         new_shadowsocks(title, ln)
     elif ln["protocol"] == "vmess":
+        if not ln["v"] or int(ln["v"]) != 2:
+            note("ignore invalid link: URL: " + dump_json(ln, None))
+            return
         new_vmess(title, ln)
     else:
         die("程序错误: " + ln["protocol"])
@@ -320,7 +331,12 @@ def parse_domain_list(filename: str):
         line = line.strip()
         if not line:
             continue
-
+        try:
+            line = idna.decode(line)
+        except:
+            print("invalid domain: " + line)
+            traceback.print_exc()
+            continue
         if "." in line:
             domain.append(f"domain:{line}")
         else:
@@ -356,17 +372,21 @@ balancers = [
     }
 ]
 for file in subsDir.glob("*.txt"):
-    title = path.splitext(file.name)[0]
+    try:
+        print("processing: " + file.as_posix())
+        title = path.splitext(file.name)[0]
 
-    balancers.append({"tag": f"balance.{title}", "selector": [f"out.{title}"]})
-    balancers[0]["selector"].append(f"out.{title}")
+        balancers.append({"tag": f"balance.{title}", "selector": [f"out.{title}"]})
+        balancers[0]["selector"].append(f"out.{title}")
 
-    content = file.read_text()
+        content = file.read_text()
 
-    for line in content.splitlines():
-        line = line.strip()
-        process_line(title, line)
-
+        for line in content.splitlines():
+            line = line.strip()
+            process_line(title, line)
+    except:
+        print("FILE: " + file.as_posix())
+        raise
 
 ####### DOMAINS
 DOMAINS_DIR: Path = Path(APP_DATA_DIR).joinpath("dns/dispatch")
@@ -397,6 +417,7 @@ may_add_domain_rule(
         "type": "field",
         "_priority": -500,
         "domain": list(set(cn_domain)),
+        # "domain": list(),
         "inboundTag": ["in.http", "in.socks"],
         "outboundTag": "out.direct",
     }
@@ -415,6 +436,10 @@ may_add_domain_rule(
 
 
 ####### write out
+if len(outbounds) == 0:
+    die("no outbound exists!!")
+
+
 r = dump_json(
     {
         "dns": {
@@ -422,7 +447,7 @@ r = dump_json(
                 {
                     "_priority": -1,
                     "address": "::1",
-                    "port": 8806,
+                    "port": 5306,
                     "domains": list(used_domains),
                 }
             ]

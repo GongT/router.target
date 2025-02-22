@@ -1,7 +1,8 @@
 [Unit]
-Description=v2ray proxy server
-After=network-online.target pppoe.service systemd-resolved.service v2ray-subscription-update.service
-# Requires=v2ray-subscription-update.service
+Description=sing-box proxy server
+Documentation=https://github.com/SagerNet/sing-box
+After=network-online.target pppoe.service systemd-resolved.service proxy-subscription-update.service
+# Requires=proxy-subscription-update.service
 
 [Install]
 WantedBy=router.target
@@ -9,14 +10,14 @@ WantedBy=router.target
 [Service]
 Type=exec
 Environment="AppDataDir=${AppDataDir}" "ROOT_DIR=${ROOT_DIR}"
-ExecStart=/usr/bin/bash "${__dirname}/config/create-config-and-start.sh"
-WorkingDirectory=/var/lib/v2ray
+ExecStart=/usr/bin/bash "${__dirname}/helpers/start.sh"
+WorkingDirectory=/var/lib/proxy
 RestartPreventExitStatus=66
 
 RestartSec=10s
 Restart=always
 
-User=v2ray
+User=proxy
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 ProtectSystem=strict
@@ -26,7 +27,7 @@ ProtectControlGroups=yes
 ProtectHome=yes
 PrivateTmp=yes
 
-LogsDirectory=v2ray
-StateDirectory=v2ray
+LogsDirectory=proxy
+StateDirectory=proxy
 
 Slice=router.slice

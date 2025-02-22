@@ -8,7 +8,7 @@ echo "[prestart] loading"
 source "$ROOT_DIR/common/fn.sh"
 
 echo "[prestart] make config file"
-filter_file config/chinadns-ng/config >"${STATE_DIRECTORY}/chinadns-config"
+filter_file "${ROOT_DIR}/services/dns/dispatch/files/config-template" >"${STATE_DIRECTORY}/chinadns-config"
 
 echo "[prestart] ensure config folder"
 cd "${AppDataDir}/dns/dispatch"
@@ -25,11 +25,11 @@ ensure "force.oversea.list"
 ensure "blacklist.list"
 
 echo "[prestart] update nftables"
-nft add table inet global
-nft add set inet global chnip4 '{ type ipv4_addr; flags interval; }'
-nft add set inet global chnip6 '{ type ipv6_addr; flags interval; }'
+nft add table inet chinadns
+nft add set inet chinadns chnip4 '{ type ipv4_addr; flags interval; }'
+nft add set inet chinadns chnip6 '{ type ipv6_addr; flags interval; }'
 
-nft add set inet global gfwip4 '{ type ipv4_addr; flags interval; }'
-nft add set inet global gfwip6 '{ type ipv6_addr; flags interval; }'
+nft add set inet chinadns gfwip4 '{ type ipv4_addr; flags interval; }'
+nft add set inet chinadns gfwip6 '{ type ipv6_addr; flags interval; }'
 
 echo "[prestart] success!"

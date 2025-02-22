@@ -1,0 +1,61 @@
+# oversea: -> clash
+.:5305 {
+	bind ::1
+	cache {
+		success 0
+		denial 1024 60
+		serve_stale
+	}
+	cancel 20s
+
+	metadata
+	
+	log . "OverSea [OK]: [{type}] {name} :: {duration} BY {/forward/upstream}" {
+		class success
+	}
+	log . "OverSea [ERR]: [{type}] {name} !{rcode} BY {/forward/upstream}"
+	errors
+
+	forward . [::1]:5342 [::1]:5343 [::1]:5344 [::1]:5345 [::1]:5346 [::1]:5347 {
+		force_tcp
+		
+		max_fails 5
+		health_check 5s
+		max_concurrent 100
+		policy random
+		except .arpa .local .internal .sbvpn
+	}
+}
+
+# china dns
+.:5306 {
+	bind ::1
+	cache {
+		success 10240 300
+		denial 1024 60
+		serve_stale
+	}
+	cancel 4s
+
+	metadata
+
+	log . "China [OK]: [{type}] {name} :: {duration} BY {/forward/upstream}" {
+		class success
+	}
+	log . "China [ERR]: [{type}] {name} !{rcode} BY {/forward/upstream}"
+	errors
+
+	forward . tls://1.12.12.12 tls://120.53.53.53 tls://223.5.5.5 tls://223.6.6.6 {
+		max_fails 5
+		health_check 5s
+		max_concurrent 300
+		policy round_robin
+		except .arpa .local .internal .sbvpn 
+	}
+}
+
+
+# vpn
+#.:5306 {
+#	wgsd sbvpn. vpn
+#}

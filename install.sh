@@ -39,7 +39,11 @@ for F in "${FILES[@]}"; do
 	install_script "$F"
 done
 
+echo -e "\e[38;5;10mscript complete\e[0m"
+
 systemctl daemon-reload
 
 ## enable all (no [install] will be ignore)
 systemctl enable "${NAMES[@]}" "${REGISTERD_UNITS[@]}"
+
+echo -e "\e[38;5;10mDone.\e[00m"

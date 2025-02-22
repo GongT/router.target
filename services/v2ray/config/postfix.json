@@ -2,7 +2,7 @@
 	"log": {
 		"access": "",
 		"error": "",
-		"loglevel": "warning"
+		"loglevel": "debug"
 	},
 	"api": {
 		"tag": "out.api",
@@ -28,7 +28,7 @@
 			{
 				"$comment": "connection from default proxy port",
 				"tag": "rule.default",
-				"_priority": 0,
+				"_priority": 1000,
 				"type": "field",
 				"inboundTag": [
 					"in.http",

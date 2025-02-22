@@ -1,0 +1,101 @@
+{
+	"log": {
+		"disabled": false,
+		"level": "debug",
+		"timestamp": false
+	},
+	"dns": {
+		"servers": [
+			{
+				"type": "tcp",
+				"tag": "dns.default",
+				"server": "::1",
+				"server_port": 53,
+				"detour": "out.direct"
+			},
+			{
+				"type": "tcp",
+				"tag": "dns.china",
+				"server": "::1",
+				"server_port": 53,
+				"detour": "out.direct"
+			},
+			{
+				"type": "tcp",
+				"tag": "dns.oversea",
+				"address": "::1",
+				"detour": "out.direct"
+			}
+		],
+		"rules": [],
+		"final": "",
+		"strategy": "",
+		"disable_cache": false,
+		"disable_expire": false,
+		"independent_cache": false,
+		"cache_capacity": 0,
+		"reverse_mapping": false,
+		"client_subnet": "",
+		"fakeip": {}
+	},
+	"ntp": {},
+	"endpoints": [],
+	"inbounds": [
+		{
+			"type": "mixed",
+			"tag": "in.default",
+			"listen": "::",
+			"listen_port": 23271,
+			"tcp_fast_open": true,
+			"tcp_multi_path": true
+		}
+	],
+	"outbounds": [
+		{
+			"type": "direct",
+			"tag": "out.direct"
+		},
+		{
+			"type": "block",
+			"tag": "out.deny"
+		},
+		{
+			"type": "shadowsocks",
+			"tag": "out_1",
+			"server": "rk1.beibei1.top",
+			"server_port": 33003,
+			"method": "chacha20-ietf-poly1305",
+			"password": "4172fde6-2075-46e3-b2af-41b80e2a3216",
+			"udp_over_tcp": true
+		}
+	],
+	"route": {
+		"geoip": {},
+		"geosite": {},
+		"rules": [
+			{
+				"inbound": [
+					"in.default"
+				],
+				"action": "route",
+				"outbound": "out_1"
+			},
+			{
+				"action": "reject",
+				"no_drop": true
+			}
+		],
+		"rule_set": [
+			{
+				"type": "local",
+				"tag": "rule.china",
+				"format": "source",
+				"path": "/data/DevelopmentRoot/github.com/gongt/router.target/config/sing-box/rule.json"
+			}
+		],
+		"final": "out.deny",
+		"auto_detect_interface": false,
+		"default_interface": "ppp0"
+	},
+	"experimental": {}
+}

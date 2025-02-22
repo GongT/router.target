@@ -30,13 +30,21 @@ done
 
 V2RAY="${ROOT_DIR:-/opt}/dist/v2ray/v2ray"
 
+v2() {
+	echo "+ $V2RAY $*" >&2
+	"${V2RAY}" "$@"
+}
+
 echo "config test."
-if "${V2RAY}" test "${CARGS[@]}"; then
-	"${V2RAY}" convert "${ARGS[@]}" | jq --tab > effective.json
+if v2 test "${CARGS[@]}"; then
+	v2 convert "${ARGS[@]}" | jq --tab > effective.json
+	rm /tmp/config.json
 
 	echo "Start with config file: $(pwd)/effective.json"
-	exec "${V2RAY}" run -c "effective.json"
+	exec "$V2RAY" run -c "effective.json"
 else
+	
 	echo "error!"
 	exit 66
 fi
+

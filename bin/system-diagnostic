@@ -28,16 +28,7 @@ function test_last() {
 }
 
 function header() {
-	local CONTENT="  $*" LINE_LENGTH RIGHT_PAD
-	echo -ne "\n\x1B[1;7m"
-	LINE_LENGTH=$(echo "$CONTENT" | wc -L)
-	RIGHT_PAD=$((COLUMNS - LINE_LENGTH))
-	echo -n "$CONTENT"
-
-	if [[ ${RIGHT_PAD} -gt 0 ]]; then
-		printf "%${RIGHT_PAD}s"
-	fi
-	echo -e "\x1B[0m"
+	printf '\n\e[1;7m    %s    \e[0m\n' "$*"
 }
 
 CONNTRACK_CURRENT=$(</proc/sys/net/netfilter/nf_conntrack_count)
@@ -70,13 +61,14 @@ SEV_NAMES=(
 	dnsdispatch.service
 	dnsconvert.service
 	dnsproxy.service
-	clash-subscription-processor.service
-	clash.service
 	ddns.timer
 	list-download.timer
 	tlds-download.timer
 	acme-renew.timer
 	natloopback.path
+	clash-subscription-processor.service
+	proxy-subscription-update.timer
+	proxy.service
 )
 declare -i ERR=0
 for I in "${SEV_NAMES[@]}"; do
@@ -106,7 +98,7 @@ else
 	echo "用量: ${CONNTRACK_PERCENT}%"
 fi
 
-if [[ $CONNTRACK_CURRENT -gt 20000 ]]; then
+if [[ $CONNTRACK_CURRENT -gt 30000 ]]; then
 	warn "警告: conntrack表过大，可能存在网络攻击。暂不处理NAT统计。"
 else
 	echo -en "统计conntrack table中……"

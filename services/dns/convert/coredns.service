@@ -1,5 +1,5 @@
 [Unit]
-Description=Coredns (convert DNS to TCP) on 8805/8806
+Description=convert DNS to TCP on 5305(oversea) and 5306(china)
 After=network-online.target pppoe.service systemd-networkd.service
 Wants=dnsdispatch.service dnsproxy.service
 
@@ -8,7 +8,7 @@ WantedBy=router.target
 
 [Service]
 Type=exec
-ExecStart="${DistBinaryDir}/core/coredns" -conf "${AppDataDir}/dns/convert/Corefile"
+ExecStart="${DistBinaryDir}/core/coredns" -conf "${__dirname}/Corefile"
 
 RestartSec=5s
 Restart=on-failure

@@ -8,12 +8,21 @@ fi
 
 function with_proxy() {
 	if [[ ${PROXY+f} == f ]] && [[ ${https_proxy+f} != f ]]; then
-		echo "using proxy: $PROXY"
-		https_proxy="$PROXY" http_proxy="$PROXY" all_proxy="$PROXY" "$@"
+		echo "[proxy] execute using proxy: $PROXY"
+		https_proxy="$PROXY" http_proxy="$PROXY" all_proxy="$PROXY" \
+			HTTPS_PROXY="$PROXY" HTTP_PROXY="$PROXY" ALL_PROXY="$PROXY" \
+			"$@"
 	else
-		echo "can not call with proxy: not set"
+		echo "[proxy] can not call with proxy: not set"
 		return 1
 	fi
+}
+
+function without_proxy() {
+	echo "[proxy] execute without proxy:"
+	https_proxy="" http_proxy="" all_proxy="" \
+		HTTPS_PROXY="" HTTP_PROXY="" ALL_PROXY="" \
+		"$@"
 }
 
 if [[ -z ${STATE_DIRECTORY-} ]]; then
@@ -21,9 +30,9 @@ if [[ -z ${STATE_DIRECTORY-} ]]; then
 fi
 
 if [[ -z ${STATE_DIRECTORY-} ]]; then
-	export STATE_DIRECTORY='/var/lib/v2ray'
+	export STATE_DIRECTORY='/var/lib/proxy'
 fi
-echo "\$STATE_DIRECTORY=${STATE_DIRECTORY-}"
+echo "STATE_DIRECTORY='${STATE_DIRECTORY-}'"
 cd "$STATE_DIRECTORY"
 
 function die() {
@@ -78,11 +87,10 @@ while read -r LINE; do
 	url=$(echo "$LINE" | cut -d' ' -f2)
 
 	echo "[$fname] Downloading from: $url"
-	# if wget --timeout=5 -4 "$url" -O "${fname}.downloading"; then
-	#	echo "complete with proxy"
-	# el
-	if _wget --force-progress --timeout=5 "$url" -O "${fname}.downloading"; then
+	if without_proxy _wget --force-progress --timeout=5 "$url" -O "${fname}.downloading"; then
 		echo "complete without proxy"
+	elif with_proxy _wget --force-progress --timeout=5 "$url" -O "${fname}.downloading"; then
+		echo "complete with proxy"
 	elif [[ -f "${fname}.txt" ]]; then
 		echo "[$fname] Failed to download. use old one."
 		continue

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PORT=8806
+PORT=5306
 
 [[ -t 1 ]] && set -x
 exec dig +retry=10 @::1 -p "$PORT" "$@"
