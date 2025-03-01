@@ -60,21 +60,20 @@ u32_up1 \
    flowid 1:10
 
 # desktop machines
-u32_up2 match ip src 10.0.2.0/24 flowid 1:10
-
 u32_up1 match u8 0 0 at -14 match ether src 6C:B3:11:65:A9:BE flowid 1:20
 u32_up1 match u8 0 0 at -14 match ether src A8:A1:59:DB:B4:72 flowid 1:20
 u32_up1 match u8 0 0 at -14 match ether src 00:ca:e0:95:bd:13 flowid 1:20
+
+u32_up2 match ip src 10.0.2.0/24 flowid 1:10
 
 # network devices
 u32_up2 match ip src 10.0.0.0/24 flowid 1:20
 
 # server
-u32_up1 match ip src 10.0.1.0/24 flowid 1:30
-
 u32_up2 match u8 0 0 at -14 match ether src 4A:E1:A2:4E:D5:6E flowid 1:30
 u32_up2 match u8 0 0 at -14 match ether src f0:dd:7a:90:46:b8 flowid 1:30
 u32_up2 match u8 0 0 at -14 match ether src f0:dd:7a:90:46:b6 flowid 1:30
 
+u32_up1 match ip src 10.0.1.0/24 flowid 1:30
 
 echo "Complete."
