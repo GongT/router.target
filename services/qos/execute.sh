@@ -67,7 +67,7 @@ u32_up1 match u8 0 0 at -14 match ether src 00:ca:e0:95:bd:13 flowid 1:20
 u32_up2 match ip src 10.0.2.0/24 flowid 1:10
 
 # network devices
-u32_up2 match ip src 10.0.0.0/24 flowid 1:20
+u32_up1 match ip src 10.0.0.0/24 flowid 1:20
 
 # server
 u32_up2 match u8 0 0 at -14 match ether src 4A:E1:A2:4E:D5:6E flowid 1:30
