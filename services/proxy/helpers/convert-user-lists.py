@@ -27,7 +27,7 @@ def parse_domain_list(file: Path):
             print("invalid domain: " + line)
             traceback.print_exc()
             continue
-        domains.append(f".{line}")
+        domains.append(line)
 
     return domains
 
@@ -37,7 +37,17 @@ def create_ruleset_file(source: Path, output: Path):
 
     print(f"write to file: {output}")
 
-    text = dump_json({"version": 3, "rules": [{"domain_suffix": domains}]})
+    text = dump_json(
+        {
+            "version": 3,
+            "rules": [
+                {
+                    "domain": domains,
+                    "domain_suffix": list(map(lambda x: f".{x}", domains)),
+                }
+            ],
+        }
+    )
     output.write_text(text)
 
 

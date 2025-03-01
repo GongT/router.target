@@ -57,7 +57,20 @@
 	"outbounds": [
 		{
 			"type": "direct",
-			"tag": "out.direct"
+			"tag": "out.direct",
+			"bind_interface": "ppp0",
+			"tcp_fast_open": true,
+			"udp_fragment": true,
+		},
+		{
+			"type": "direct",
+			"tag": "out.lan",
+			"bind_interface": "br-lan",
+		},
+		{
+			"type": "direct",
+			"tag": "out.vpn",
+			"bind_interface": "vpn",
 		},
 		{
 			"type": "selector",
@@ -97,9 +110,19 @@
 		"rules": [
 			// 跳过各种私有地址
 			{
+				"ip_cidr": [
+					"10.213.66.0/24",
+				],
+				"action": "route",
+				"outbound": "out.vpn",
+			},
+			{
+				"ip_cidr": [
+					"10.0.0.0/20",
+				],
 				"ip_is_private": true,
 				"action": "route",
-				"outbound": "out.direct"
+				"outbound": "out.lan",
 			},
 			{
 				"rule_set": [
@@ -115,6 +138,13 @@
 				],
 				"action": "route",
 				"outbound": "out.global"
+			},
+			{
+				"rule_set": [
+					"ruleset.manual"
+				],
+				"action": "route",
+				"outbound": "out.manual"
 			},
 			{
 				"rule_set": [
@@ -136,6 +166,12 @@
 			}
 		],
 		"rule_set": [
+			{
+				"tag": "ruleset.manual",
+				"type": "local",
+				"format": "source",
+				"path": "${AppDataDir}/proxy/select_rule.json"
+			},
 			// {
 			// 	"tag": "ruleset.geoip-cn",
 			// 	"type": "remote",
@@ -170,9 +206,9 @@
 			},
 		],
 		"final": "out.global",
-		"auto_detect_interface": false,
+		"auto_detect_interface": true,
 		"default_interface": "ppp0",
-		"default_mark": 66
+		// "default_mark": 66
 	},
 	"experimental": {
 		"cache_file": {

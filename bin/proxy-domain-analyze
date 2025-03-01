@@ -1,0 +1,1 @@
+journalctl -ocat --since '1d ago' -u proxy.service | grep -A 1 -F ' outbound connection to '

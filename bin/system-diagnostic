@@ -123,7 +123,7 @@ resolve-dispatch "$TEST_HOST" | grep -q NOERROR
 test_last
 
 echo -n "解析本地地址: "
-RAND_HOST=$(cat /data/AppData/router/dhcp/leases/dhcp.leases | awk '{print $4}' | sed -E '/\*|^$/d' | sort | uniq | sort -R | head -n 1)
+RAND_HOST=$(cat /var/lib/dhcp/dhcp.leases | awk '{print $4}' | sed -E '/\*|^$/d' | sort | uniq | sort -R | head -n 1)
 if [[ ! $RAND_HOST ]]; then
 	warn "局域网中似乎没有连接任何设备，无法测试"
 else

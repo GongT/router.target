@@ -24,7 +24,7 @@ ProtectSystem=strict
 PrivateDevices=yes
 ProtectKernelTunables=yes
 ProtectControlGroups=yes
-ProtectHome=yes
+ProtectHome=no
 PrivateTmp=yes
 
 LogsDirectory=proxy

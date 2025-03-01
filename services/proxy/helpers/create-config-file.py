@@ -94,6 +94,7 @@ for ob in outbounds:
     used_domains.add(ob["server"])
 
 template = Path(__file__).parent.joinpath("template.json").read_text()
+template = template.replace('${AppDataDir}', APP_DATA_DIR)
 config = json.loads(template)
 
 rules: list = config["dns"]["rules"]

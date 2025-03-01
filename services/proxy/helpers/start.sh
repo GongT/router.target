@@ -12,20 +12,24 @@ cd "$STATE_DIRECTORY"
 
 export CONFIG_FILE="${STATE_DIRECTORY}/subscription.json"
 BINARY="${ROOT_DIR:-/opt}/dist/sing-box"
-APP_CONFIG="${ROOT_DIR:-/opt}/services/sing-box/config/config.json"
+
+x() {
+	echo "$*" >&2
+	"$@"
+}
 
 echo ""
 echo "creating config file: ${CONFIG_FILE}"
 function create_cfg() {
-	python3 "${__dirname}/create-config-file.py" "${CONFIG_FILE}"
-	python3 "${__dirname}/convert-user-lists.py"
+	x python3 "${__dirname}/create-config-file.py" "${CONFIG_FILE}"
+}
+function process_list() {
+	x python3 "${__dirname}/convert-user-lists.py"
 }
 
-if ! create_cfg &>/dev/null; then
-	create_cfg || true
-
+if ! create_cfg || ! process_list; then
 	echo "!!!failed generate config file!!!"
 	exit 66
 fi
 
-exec "${BINARY}" --directory "${STATE_DIRECTORY}" --config "${CONFIG_FILE}" run
+x exec "${BINARY}" --disable-color --directory "${STATE_DIRECTORY}" --config "${CONFIG_FILE}" run

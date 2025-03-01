@@ -1,9 +1,9 @@
 #!/bin/sh
 
-echo "/data/AppData/router/dhcp/leases/dhcp.leases:"
-cat /data/AppData/router/dhcp/leases/dhcp.leases
+echo "/var/lib/dhcp/dhcp.leases:"
+cat /var/lib/dhcp/dhcp.leases
 
 echo "===================================="
 
-echo "/data/AppData/router/dhcp/config/static.conf:"
-cat /data/AppData/router/dhcp/config/static.conf
+echo "/data/AppData/router/dhcp/static.conf:"
+cat /data/AppData/router/dhcp/static.conf

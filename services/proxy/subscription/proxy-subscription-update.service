@@ -23,4 +23,6 @@ PrivateTmp=yes
 User=proxy
 StateDirectory=proxy
 
+BindReadOnlyPaths=${__dirname}/resolv.conf:/etc/resolv.conf
+
 Slice=router.slice

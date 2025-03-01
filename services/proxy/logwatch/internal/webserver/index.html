@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<title>代理统计</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css"
+		integrity="sha512-KXol4x3sVoO+8ZsWPFI/r5KBVB/ssCGB5tsv2nVOKwLg33wTFP3fmnXa47FdSVIshVTgsYk/1734xSk9aFIa4A=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+		integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js"
+		integrity="sha512-Xo0Jh8MsOn72LGV8kU5LsclG7SUzJsWGhXbWcYs2MAmChkQzwiW/yTQwdJ8w6UA9C6EVG18GHb/TrYpYCjyAQw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<style>
+		.container {
+			margin: auto;
+			max-width: 80%;
+		}
+
+		.table-title {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.sort-button {
+			cursor: pointer;
+		}
+
+		.bottom-actions {
+			display: flex;
+			flex-direction: row;
+		}
+
+		.bottom-actions>.spacer {
+			flex-grow: 1;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>代理统计</h1>
+		<div class="main-table">
+			<table class="ui celled padded table selectable ">
+				<thead>
+					<tr>
+						<th>
+							<div class="table-title single line">
+								<span>#</span>
+								<div class="ui floated right sort-button" data-sort="id">
+									<i class="up sort circular icon"></i>
+								</div>
+							</div>
+						</th>
+						<th>
+							<div class="table-title single line">
+								<span>域名/IP</span>
+								<div class="ui floated right sort-button" data-sort="domain">
+									<i class="down sort circular icon"></i>
+								</div>
+							</div>
+						</th>
+						<th>
+							<div class="table-title single line">
+								<span>总上传</span>
+								<div class="ui floated right sort-button" data-sort="download_total">
+									<i class="sort circular icon"></i>
+								</div>
+							</div>
+						</th>
+						<th>
+							<div class="table-title single line">
+								<span>总下载</span>
+								<div class="ui floated right sort-button" data-sort="upload_total">
+									<i class="sort circular icon"></i>
+								</div>
+							</div>
+						</th>
+						<th>
+							<div class="table-title single line">
+								<span>代理次数</span>
+								<div class="ui floated right sort-button" data-sort="output_proxy">
+									<i class="sort circular icon"></i>
+								</div>
+							</div>
+						</th>
+						<th>
+							<div class="table-title single line">
+								<span>直连次数</span>
+								<div class="ui floated right sort-button" data-sort="output_direct">
+									<i class="sort circular icon"></i>
+								</div>
+							</div>
+						</th>
+						<th>
+							<div class="table-title single line">
+								<span>未知次数</span>
+								<div class="ui floated right sort-button" data-sort="output_unknown">
+									<i class="sort circular icon"></i>
+								</div>
+							</div>
+						</th>
+						<th>
+							<div class="single line">
+								<span>操作</span>
+							</div>
+						</th>
+					</tr>
+				</thead>
+				<tbody id="data-table-body">
+				</tbody>
+				<tfoot>
+					<tr>
+						<th colspan="8">
+							<div class="ui right floated bottom-actions">
+								<div id="page-nav" class="ui pagination menu">
+									<a class="icon item prev">
+										<i class="left chevron icon"></i>
+									</a>
+									<a class="item">1</a>
+									<a class="item">2</a>
+									<a class="item">3</a>
+									<a class="item">4</a>
+									<a class="item">5</a>
+									<a class="icon item next">
+										<i class="right chevron icon"></i>
+									</a>
+								</div>
+								<div class="spacer"></div>
+								<button id="refresh" class="ui button">刷新</button>
+								<form id="page-jump" class="ui action input">
+									<input type="number" value="1" min="1" placeholder="跳转到">
+									<button class="ui button" type="submit">跳转</button>
+								</form>
+							</div>
+						</th>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+</body>
+
+
+<script type="module">
+	const $sortBtns = $('.sort-button');
+	const currentState = {
+		sortKey: 'id',
+		order: 'asc',
+		page: 1,
+		maxPage: 0,
+		perPage: 30,
+		$e: $sortBtns.first()
+	};
+	$sortBtns.each((_, e) => {
+		const key = $(e).data('sort');
+		let order = 'asc';
+
+		$(e).click(() => {
+			if (currentState.sortKey !== key) {
+				order = 'asc';
+			}
+			currentState.$e.find('i').removeClass('up down');
+			if (order === 'asc') {
+				order = 'desc';
+				$(e).find('i').removeClass('up').addClass('down');
+			} else {
+				order = 'asc';
+				$(e).find('i').removeClass('down').addClass('up');
+			}
+
+			currentState.sortKey = key;
+			currentState.order = order;
+
+			reloadData();
+		});
+	});
+
+	$sortBtns.find('i').removeClass('up down');
+
+	const $pageNavItems = $('#page-nav>.item');
+	const $pageJump = $('#page-jump');
+	const $pageJumpValue = $pageJump.find('>input');
+
+	function updatePageNav(currentPage, maxPage) {
+		const $prev = $pageNavItems.filter('.prev');
+		const $next = $pageNavItems.filter('.next');
+		const $pages = $pageNavItems.not('.prev,.next');
+
+		currentState.page = currentPage;
+		currentState.maxPage = maxPage;
+
+		$pageJumpValue.val(currentPage);
+
+		$prev.data('page', Math.max(1, currentPage - 1));
+		if (currentPage <= 1) {
+			$prev.addClass('disabled');
+		} else {
+			$prev.removeClass('disabled');
+		}
+
+		$next.data('page', Math.min(maxPage, currentPage + 1));
+		if (currentPage >= maxPage) {
+			$next.addClass('disabled');
+		} else {
+			$next.removeClass('disabled');
+		}
+
+		let leftPage = Math.max(1, currentPage - 2);
+		if (maxPage - leftPage < 4) {
+			leftPage = Math.min(maxPage - 4, leftPage);
+			leftPage = Math.max(1, leftPage);
+		}
+		$pages.each((i, e) => {
+			let page = leftPage + i;
+			if (page > maxPage) {
+				page = '-';
+				$(e).text(page).removeData('page');
+			} else {
+				$(e).text(page).data('page', page);
+			}
+
+			if (page <= 0 || page > maxPage || page === currentPage || page === '-') {
+				$(e).addClass('disabled');
+			} else {
+				$(e).removeClass('disabled');
+			}
+		});
+	}
+
+	$pageJump.submit(function (e) {
+		e.preventDefault();
+		const page = parseInt($pageJumpValue.val());
+		if (!isNaN(page) && page > 0 && page !== currentState.page && page <= currentState.maxPage) {
+			currentState.page = page;
+			reloadData();
+		}
+	});
+
+	$pageNavItems.click(function () {
+		const page = $(this).data('page');
+		if (page) {
+			currentState.page = page;
+			reloadData();
+		}
+	});
+
+	function reloadData() {
+		console.log('reload data.', currentState);
+		reloadDataBody().catch(e => {
+			console.error(e);
+			alert(e);
+		});
+	}
+
+	const $tbody = $('#data-table-body');
+	async function reloadDataBody() {
+		$tbody.empty();
+
+		const response = await fetch('/stats', {
+			method: 'POST',
+			body: JSON.stringify({
+				sort: currentState.sortKey,
+				order: currentState.order,
+				page: currentState.page,
+				perPage: currentState.perPage
+			}),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		const result = await response.json();
+
+		for (const row of result.data) {
+			const $tr = $('<tr>').data(row);
+			$tr.append(`<td>${row.id}</td>`);
+			$tr.append(`<td>${row.domain}</td>`);
+			$tr.append(`<td>${row.download_total}</td>`);
+			$tr.append(`<td>${row.upload_total}</td>`);
+			$tr.append(`<td>${row.output_proxy}</td>`);
+			$tr.append(`<td>${row.output_direct}</td>`);
+			$tr.append(`<td>${row.output_unknown}</td>`);
+			$tr.append(`<td><a href="###">XXX</a></td>`);
+			$tbody.append($tr);
+		}
+
+		updatePageNav(result.page, result.maxPage);
+	}
+
+	$('#refresh').click(() => reloadData());
+	reloadData();
+</script>
+
+</html>

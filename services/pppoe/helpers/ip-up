@@ -21,3 +21,4 @@ firewall-cmd --permanent --ipset=wan-4 "--add-entry=$LOCAL_IP"
 firewall-cmd --reload
 
 systemctl start ddns.service --no-block
+systemctl restart qos.service --no-block

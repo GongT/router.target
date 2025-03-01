@@ -8,7 +8,7 @@ WantedBy=router.target
 
 [Service]
 ExecStartPre=/usr/sbin/ip addr
-ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf
+ExecStart=/usr/sbin/dnsmasq -k --conf-file=${__dirname}/files/dnsmasq.conf --conf-dir=${AppDataDir}/dhcp,*.conf
 Type=exec
 
 RestartSec=5s
@@ -20,8 +20,6 @@ ProtectKernelTunables=no
 ProtectControlGroups=yes
 ProtectHome=yes
 
-InaccessiblePaths=/data /etc/dnsmasq.conf
-BindPaths=${AppDataDir}/dhcp/config:/etc/dnsmasq.d
-BindPaths=${AppDataDir}/dhcp/leases:/run/leases
+StateDirectory=dhcp
 
 Slice=router.slice
