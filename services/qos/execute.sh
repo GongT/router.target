@@ -13,7 +13,7 @@ tc() {
    /usr/sbin/tc "$@"
 }
 
-tc qdisc del dev "${IFNAME}" root 2>/dev/null
+tc qdisc del dev "${IFNAME}" root 2>/dev/null || true
 tc qdisc add dev "${IFNAME}" root handle 1: htb default 30 r2q 500
 
 tc class add dev "${IFNAME}" parent 1: classid 1:1 htb rate "${MAX_MBPS}mbps" ceil "${MAX_MBPS}mbps"

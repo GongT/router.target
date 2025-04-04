@@ -12,6 +12,7 @@ WorkingDirectory=/var/lib/proxy
 RestartSec=10s
 Restart=on-failure
 RestartPreventExitStatus=66
+TimeoutStartSec=1min
 
 ProtectSystem=strict
 PrivateDevices=yes

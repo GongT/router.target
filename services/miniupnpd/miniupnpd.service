@@ -1,0 +1,27 @@
+[Unit]
+Description=Lightweight UPnP IGD daemon
+Documentation=man:miniupnpd(8)
+
+[Service]
+Type=notify
+Environment=ROOT_DIR="${ROOT_DIR}"
+WorkingDirectory=${__dirname}/scripts
+ExecStart=/usr/bin/bash "execute.sh"
+ExecStartPre=/usr/bin/bash "firewall-create.sh"
+ExecStopPost=/usr/bin/bash "firewall-remove.sh"
+
+RestartSec=30s
+Restart=on-failure
+RestartPreventExitStatus=233
+
+ProtectSystem=full
+DevicePolicy=closed
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+
+StateDirectory=miniupnpd
+RuntimeDirectory=miniupnpd
+PIDFile=/run/miniupnpd/miniupnpd.pid
+
+Slice=router.slice

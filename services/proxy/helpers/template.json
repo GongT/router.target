@@ -120,6 +120,12 @@
 				"ip_cidr": [
 					"10.0.0.0/20",
 				],
+				"domain_suffix": [
+					"internal",
+					"local",
+					"localhost",
+					"localdomain",
+				],
 				"ip_is_private": true,
 				"action": "route",
 				"outbound": "out.lan",

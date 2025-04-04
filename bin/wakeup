@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cat /data/AppData/router/dhcp/static.conf | grep "$1" | grep -oP '\b([a-fA-f0-9]+:)+[a-fA-F0-9]+\b' | xargs -n1 -t ether-wake -D -i br-lan -b
+cat /data/AppData/router/dhcp/static.conf | grep "$1" | grep -oP '\b([a-fA-f0-9]+:)+[a-fA-F0-9]+\b' | xargs -n1 -t ether-wake -D -i br-lan
+
+

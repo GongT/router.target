@@ -32,8 +32,8 @@ def parse_domain_list(file: Path):
     return domains
 
 
-def create_ruleset_file(source: Path, output: Path):
-    domains = parse_domain_list(source)
+def create_ruleset_file(source: Path, output: Path, additinal_domains=[]):
+    domains = [*parse_domain_list(source), *additinal_domains]
 
     print(f"write to file: {output}")
 
@@ -63,7 +63,8 @@ create_ruleset_file(
 )
 
 create_ruleset_file(
-    DOMAINS_DIR.joinpath("force.china.list"), RULES_DIR.joinpath("direct.json")
+    DOMAINS_DIR.joinpath("force.china.list"),
+    RULES_DIR.joinpath("direct.json"),
 )
 
 create_ruleset_file(
