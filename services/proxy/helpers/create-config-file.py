@@ -3,7 +3,7 @@ from pathlib import Path
 from os import path
 
 from config_tools.functions import die, dump_json
-from config_tools.data_types.vmess import VMessTransport
+from config_tools.data_types.vmess import V2RayTransport
 from config_tools.data_types.shadowsocks import ShadowSocksOutbound
 from config_tools.env import APP_DATA_DIR, OUTPUT_FILE, STATE_DIR
 from config_tools.subscription_url import parse_url
@@ -13,13 +13,15 @@ if __name__ != "__main__":
     die("this is a script, not a library.")
 
 
-outbounds: list[ShadowSocksOutbound | VMessTransport] = []
+outbounds: list[ShadowSocksOutbound | V2RayTransport] = []
 
 
 def process_line(provider: str, line: str):
     ln = parse_url(line)
+    if ln is None:
+        return
 
-    if block_by_tag(ln["ps"]):
+    if block_by_tag(ln["title"]):
         return
 
     ob = create_transport_object(ln)
@@ -50,8 +52,12 @@ def block_by_tag(name: str) -> bool:
         "剩余",
         "到期",
         "官网",
+        "网址",
         "续费",
         "过期",
+        "超时",
+        "Traffic:",
+        "Expire:",
     ]
     for bln in blnames:
         if bln in name:

@@ -12,6 +12,10 @@ def note(msg: str):
     print(f"\x1B[2m{msg}\x1B[0m", file=stderr)
 
 
+def error(msg: str):
+    print(f"\x1B[38;5;9m{msg}\x1B[0m", file=stderr)
+
+
 def is_dict_empty(d: dict):
     return len(d) == 0
 

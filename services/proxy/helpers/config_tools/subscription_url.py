@@ -1,5 +1,13 @@
 import json
-from .functions import base64_decode, is_dict_empty, die, dump_json, note, dict_pop
+from .functions import (
+    base64_decode,
+    is_dict_empty,
+    die,
+    dump_json,
+    note,
+    dict_pop,
+    error,
+)
 
 import urllib.parse
 import base64
@@ -8,16 +16,17 @@ from typing import TypedDict
 
 class AbsLinkObj(TypedDict, total=False):
     protocol: str
+    title: str
     v: str
-    
+
     # platform spec
     remark: str
     class_: str
 
     # vmess
-    ps: str  # 别名
+    # ps: str  # 别名
     add: str  # ip地址
-    port: str  # 端口
+    port: int  # 端口
     id: str  # uuid
     aid: str  # alterid
     net: str  # 传输协议
@@ -31,10 +40,19 @@ class AbsLinkObj(TypedDict, total=False):
     method: str
     password: str
 
+    # trojan
+    server: str
+    port: int
+    password: str
+    tls_insecure: bool
+    tls_server_name: str
+    udp: bool
+
 
 def parse_url(url: str):
     vmess = "vmess://"
     ss = "ss://"
+    trojan = "trojan://"
     link = AbsLinkObj()
     if url.startswith(ss):
         link["protocol"] = "ss"
@@ -42,11 +60,15 @@ def parse_url(url: str):
     elif url.startswith(vmess):
         link["protocol"] = "vmess"
         parse_vmess_url(link, url[len(vmess) :])
+    elif url.startswith(trojan):
+        link["protocol"] = "trojan"
+        parse_trojan_url(link, url[len(trojan) :])
     else:
-        die(
-            "ERROR: This script supports only vmess://(N/NG) and ss:// links\nURL: "
+        error(
+            "ERROR: This script supports only vmess://(N/NG), ss://, and trojan:// links\nURL: "
             + url
         )
+        return None
 
     return link
 
@@ -54,7 +76,7 @@ def parse_url(url: str):
 def parse_ss_url(link: AbsLinkObj, data: str):
     if data.rfind("#") > 0:
         data, _ps = data.split("#", 2)
-        link["ps"] = urllib.parse.unquote(_ps)
+        link["title"] = urllib.parse.unquote(_ps)
 
     if data.find("@") < 0:
         # 老式链接，对整个url进行base64
@@ -72,7 +94,7 @@ def parse_ss_url(link: AbsLinkObj, data: str):
         method, password = data.split(":", 2)
 
     link["add"] = addr
-    link["port"] = port
+    link["port"] = int(port)
     link["method"] = method
     link["password"] = password
     return link
@@ -94,10 +116,48 @@ def parse_vmess_url(link: AbsLinkObj, data: str):
             if v is not None:
                 link[i] = v
 
+    title = dict_pop(body, "ps")
+    if title:
+        link["title"] = title
+
+    if "port" in link:
+        link["port"] = int(link["port"])
+
     if "headerType" in body:
         link["type"] = dict_pop(body, "headerType")
-        
-    link['class_'] = dict_pop(body, 'class')
+
+    link["class_"] = dict_pop(body, "class")
 
     if not is_dict_empty(body):
         note("未知vmess url字段: " + dump_json(body, None) + "\nURL: " + text)
+
+
+def parse_trojan_url(link: AbsLinkObj, data: str):
+    url = urllib.parse.urlparse(data)
+    qs = urllib.parse.parse_qs(url.query)
+    link["title"] = urllib.parse.unquote(url.fragment)
+
+    if url.path and not url.netloc:
+        url = urllib.parse.urlparse("trojan://" + url.path)
+
+    if url.hostname:
+        link["server"] = url.hostname
+    if url.port:
+        link["port"] = url.port
+    if url.username:
+        link["password"] = url.username
+
+    insecure = qs.get("allowInsecure")
+    if insecure is not None:
+        link["tls_insecure"] = bool(int(insecure[0]))
+
+    link["udp"] = bool(qs.get("udp", [None])[0])
+    # link['xxxx'] = qs.get('peer', [None])[0]
+
+    sni = qs.get("sni")
+    if sni is not None:
+        link["tls_server_name"] = sni[0]
+
+    peer = qs.get("peer")
+
+    return link

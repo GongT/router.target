@@ -10,7 +10,7 @@ from .basic import (
 type HeadersMap = dict[str, str]
 
 
-class VMessTransport(BaseOutbound, DialFields, TypedDict, total=False):
+class V2RayTransport(BaseOutbound, DialFields, TypedDict, total=False):
     # https://sing-box.sagernet.org/zh/configuration/shared/v2ray-transport/
     type: str
 
@@ -65,4 +65,4 @@ class VMessOutbound(TypedDict, total=False):
     tls: TlsFields
     packet_encoding: str
     multiplex: MultiplexFields
-    transport: VMessTransport
+    transport: V2RayTransport

@@ -4,10 +4,12 @@
 import json
 from typing import cast
 
+from .data_types.trojan import TrojanOutbound
+
 from .data_types.basic import TlsFields
 
 from .subscription_url import AbsLinkObj
-from .data_types.vmess import VMessOutbound, VMessTransport
+from .data_types.vmess import VMessOutbound, V2RayTransport
 from .data_types.shadowsocks import ShadowSocksOutbound
 from .functions import die, dump_json, note, dict_pop, is_dict_empty
 
@@ -23,13 +25,15 @@ def create_transport_object(
     if protocol == "ss":
         r = transport_make_shadowsocks(ln)
     elif protocol == "vmess":
-        version = int(ln.get('v', 0))
+        version = int(ln.get("v", 0))
         if version != 2:
             note("ignore invalid link: URL: " + dump_json(ln, None))
             return
-        ln.pop('v', None)
-        
+        ln.pop("v", None)
+
         r = transport_make_vmess(ln)
+    elif protocol == "trojan":
+        r = transport_make_trojan(ln)
     else:
         die("程序错误: " + protocol)
 
@@ -37,7 +41,12 @@ def create_transport_object(
     ln.pop("class_", None)
 
     if not is_dict_empty(ln):
-        note("未知连接信息字段: " + ", ".join(ln.keys()) + "\nURL: " + dump_json(ln, None))
+        note(
+            "未知连接信息字段: "
+            + ", ".join(ln.keys())
+            + "\nURL: "
+            + dump_json(ln, None)
+        )
 
     return r
 
@@ -45,9 +54,9 @@ def create_transport_object(
 def transport_make_shadowsocks(link: AbsLinkObj) -> ShadowSocksOutbound:
     ss_server = ShadowSocksOutbound(
         type="shadowsocks",
-        tag=link.pop("ps"),
+        tag=link.pop("title"),
         server=link.pop("add"),
-        server_port=int(link.pop("port")),
+        server_port=link.pop("port"),
         method=link.pop("method"),
         password=link.pop("password"),
     )
@@ -55,12 +64,12 @@ def transport_make_shadowsocks(link: AbsLinkObj) -> ShadowSocksOutbound:
 
 
 def transport_make_vmess(link: AbsLinkObj) -> VMessOutbound | None:
-    tagName = link.get("ps")
+    tagName = link.get("title")
     r = VMessOutbound(
         type="vmess",
-        tag=link.pop("ps"),
+        tag=link.pop("title"),
         server=link.pop("add"),
-        server_port=int(link.pop("port")),
+        server_port=link.pop("port"),
         alter_id=int(link.pop("aid")),
         uuid=link.pop("id"),
         security="auto",
@@ -87,7 +96,7 @@ def transport_make_vmess(link: AbsLinkObj) -> VMessOutbound | None:
         note(f"unsupported transport: KCP ({tagName})")
         return None
     elif net == "ws":
-        r["transport"] = VMessTransport(
+        r["transport"] = V2RayTransport(
             type="ws",
             path=path,
             early_data_header_name="Sec-WebSocket-Protocol",
@@ -105,10 +114,34 @@ def transport_make_vmess(link: AbsLinkObj) -> VMessOutbound | None:
             note(f"not implemented transport: HTTP ({tagName})")
             return None
         elif transport == "" or transport == "none":
-            r["network"] = "tcp"
+            pass
         else:
             die("未知的tcp类型: " + transport)
     else:
         die(f"未知的net类型: {net} ({tagName})")
+
+    return r
+
+
+def transport_make_trojan(link: AbsLinkObj) -> TrojanOutbound | None:
+    r = TrojanOutbound(
+        type="trojan",
+        tag=link.pop("title"),
+        server=link.pop("server"),
+        server_port=link.pop("port"),
+        password=link.pop("password"),
+    )
+    
+    tls_insecure = link.pop("tls_insecure")
+    tls_server_name = link.pop("tls_server_name")
+    udp = link.pop("udp")
+    
+    if tls_insecure or tls_server_name:
+        r["tls"] = TlsFields(
+            enabled=True,
+            insecure=tls_insecure,
+        )
+        if tls_server_name:
+            r["tls"]["server_name"] = tls_server_name
 
     return r

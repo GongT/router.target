@@ -1,9 +1,7 @@
 [Unit]
 Description=DNS server for guest network
-After=dnsdispatch.service systemd-networkd.service
+After=dnsdispatch.service systemd-networkd.service systemd-resolved.service 
 Wants=nss-lookup.target
-Requires=systemd-resolved.service 
-Conflicts=dnsmasq.service
 
 [Install]
 WantedBy=router.target
@@ -22,7 +20,8 @@ ProtectControlGroups=yes
 ProtectHome=yes
 StateDirectory=wireguard
 
-InaccessiblePaths=/data /etc/dnsmasq.conf
+InaccessiblePaths=-/data
+InaccessiblePaths=-/etc/dnsmasq.conf
 BindPaths=${PWD}/config:/etc/dnsmasq.d
 BindPaths=${AppDataDir}/dns/wireguard:/etc/dnsmasq.d/dynamic
 

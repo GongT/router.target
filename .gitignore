@@ -5,3 +5,4 @@ dist
 .local
 __pycache__
 *.pyc
+.vscode/local-history

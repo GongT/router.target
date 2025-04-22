@@ -69,6 +69,7 @@ SEV_NAMES=(
 	clash-subscription-processor.service
 	proxy-subscription-update.timer
 	proxy.service
+	wireguard-dns.service
 )
 declare -i ERR=0
 for I in "${SEV_NAMES[@]}"; do
