@@ -120,10 +120,10 @@ def merge_object(a: dict, b: dict, _dpath=""):
             a[k] = v
 
 
-# custom = Path(APP_DATA_DIR).joinpath("proxy/custom.json")
-# if custom.exists():
-#     custom_config = json.loads(custom.read_text())
-#     merge_object(config, custom_config)
+custom = Path(APP_DATA_DIR).joinpath("proxy/custom.json")
+if custom.exists():
+    custom_config = json.loads(custom.read_text())
+    merge_object(config, custom_config)
 
 
 rules: list = config["dns"]["rules"]
