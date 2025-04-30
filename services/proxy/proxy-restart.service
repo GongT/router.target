@@ -1,0 +1,9 @@
+[Unit]
+Description=watch proxy subscription update event
+
+[Service]
+Type=oneshot
+Restart=no
+ExecStart=/usr/bin/systemctl --no-block restart proxy.service
+
+Slice=router.slice

@@ -21,7 +21,7 @@ x() {
 echo ""
 echo "creating config file: ${CONFIG_FILE}"
 function create_cfg() {
-	x python3 "${__dirname}/create-config-file.py" "${CONFIG_FILE}"
+	x python3 "${__dirname}/create-config-file.py"
 }
 function process_list() {
 	x python3 "${__dirname}/convert-user-lists.py"

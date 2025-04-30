@@ -11,31 +11,31 @@
 				"tag": "dns.default",
 				"server": "::1",
 				"server_port": 53,
-				"detour": "out.direct"
+				"detour": "out.lo"
 			},
 			{
 				"type": "udp",
 				"tag": "dns.direct",
 				"server": "::1",
 				"server_port": 5305,
-				"detour": "out.direct"
+				"detour": "out.lo"
 			},
 			{
 				"type": "udp",
 				"tag": "dns.proxy",
 				"server": "::1",
 				"server_port": 5306,
-				"detour": "out.direct"
+				"detour": "out.lo"
 			}
 		],
 		"rules": [],
 		"final": "dns.default",
 		"strategy": "prefer_ipv6",
-		"disable_cache": false,
+		"disable_cache": true,
 		"disable_expire": false,
 		"independent_cache": false,
 		"cache_capacity": 3000,
-		"reverse_mapping": true,
+		"reverse_mapping": false,
 		// "client_subnet": "",
 		"fakeip": {}
 	},
@@ -66,6 +66,11 @@
 			"type": "direct",
 			"tag": "out.lan",
 			"bind_interface": "br-lan",
+		},
+		{
+			"type": "direct",
+			"tag": "out.lo",
+			"bind_interface": "lo",
 		},
 		{
 			"type": "direct",

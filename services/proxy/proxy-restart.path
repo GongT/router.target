@@ -1,0 +1,10 @@
+[Unit]
+Description=watch proxy subscription update event
+
+[Install]
+WantedBy=router.target
+
+[Path]
+PathChanged=/var/lib/proxy/subscription-updated
+TriggerLimitIntervalSec=1min
+TriggerLimitBurst=3

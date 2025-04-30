@@ -100,8 +100,31 @@ for ob in outbounds:
     used_domains.add(ob["server"])
 
 template = Path(__file__).parent.joinpath("template.json").read_text()
-template = template.replace('${AppDataDir}', APP_DATA_DIR)
+template = template.replace("${AppDataDir}", APP_DATA_DIR)
 config = json.loads(template)
+
+
+def merge_object(a: dict, b: dict, _dpath=""):
+    for k, v in b.items():
+        if k not in a:
+            a[k] = v
+            continue
+
+        if isinstance(a[k], dict):
+            merge_object(a[k], v, _dpath + "." + k)
+        elif isinstance(a[k], list):
+            print(f"concat array at {_dpath}.{k}")
+            a[k] = v + a[k]
+        else:
+            print(f"set value {_dpath}.{k}")
+            a[k] = v
+
+
+# custom = Path(APP_DATA_DIR).joinpath("proxy/custom.json")
+# if custom.exists():
+#     custom_config = json.loads(custom.read_text())
+#     merge_object(config, custom_config)
+
 
 rules: list = config["dns"]["rules"]
 rules.insert(

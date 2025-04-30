@@ -4,15 +4,14 @@ After=network-online.target pppoe.service systemd-resolved.service
 
 [Service]
 Type=oneshot
+ExecStartPre=+/usr/bin/chown proxy:proxy /var/lib/proxy -R
 ExecStart=/usr/bin/bash "${__dirname}/update-subscription.sh"
 
 Environment="INPUT_FILE=${AppDataDir}/proxy/subscription.txt"
 WorkingDirectory=/var/lib/proxy
 
-RestartSec=10s
-Restart=on-failure
-RestartPreventExitStatus=66
-TimeoutStartSec=1min
+Restart=no
+TimeoutStartSec=10min
 
 ProtectSystem=strict
 PrivateDevices=yes

@@ -1,5 +1,6 @@
 {
 	"search.exclude": {
+		"**/.vscode/local-history": true,
 		".config/**": true,
 	},
 	"files.associations": {

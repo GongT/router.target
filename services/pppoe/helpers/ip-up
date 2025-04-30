@@ -13,11 +13,43 @@ log() {
 	logger --tag 'pppoe:ipv4' --stderr "$*"
 }
 
+rm_all() {
+	local T="$1"
+	firewall-cmd --permanent "--ipset=$T" --get-entries | firewall-cmd --permanent "--ipset=$T" --remove-entries-from-file=/dev/stdin
+}
+
+ip_is() {
+	local VER="$1" IP="$2"
+	ipcalc --check "-$VER" "$IP" &>/dev/null
+}
+
 log "[ipv4-up] interface-name=$IF_NAME tty-device=$TTY_DEVICE speed=$SPEED local-IP-address=$LOCAL_IP remote-IP-address=$REMOTE_IP ipparam=$IP_PARAM"
 env | logger --tag 'pppoe:ipv4'
 
-firewall-cmd --permanent --ipset=wan-4 --get-entries | firewall-cmd --permanent --ipset=wan-4 --remove-entries-from-file=/dev/stdin
+rm_all wan-4
 firewall-cmd --permanent --ipset=wan-4 "--add-entry=$LOCAL_IP"
+
+mapfile -t IP_LIST < <(hostname --all-ip-addresses | tr ' ' '\n' | grep -v '^$')
+ARG4=("--add-entry=127.0.0.0/8")
+ARG6=("--add-entry=::1")
+for IP in "${IP_LIST[@]}"; do
+	if [[ -z $IP ]]; then
+		continue
+	fi
+
+	if ip_is 4 "$IP"; then
+		ARG4+=("--add-entry=$IP")
+	elif ip_is 6 "$IP"; then
+		ARG6+=("--add-entry=$IP")
+	else
+		log "Invalid IP address: [$IP]"
+	fi
+done
+rm_all localhost-4
+firewall-cmd --permanent --ipset=localhost-4 "${ARG4[@]}"
+rm_all localhost-6
+firewall-cmd --permanent --ipset=localhost-6 "${ARG6[@]}"
+
 firewall-cmd --reload
 
 systemctl start ddns.service --no-block

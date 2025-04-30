@@ -28,11 +28,11 @@ handle() {
 		echo "$FILE not change"
 		return
 	fi
+	echo "$FILE file changed"
 
 	CHANGE=yes
 
 	local OLD_FILE="/etc/firewalld/policies/$FILE.xml.old"
-	echo "$FILE file changed"
 	rm -f "$OLD_FILE"
 
 	if [[ -e $FPATH ]]; then
