@@ -3,12 +3,13 @@
 set -Eeuo pipefail
 
 echo "[prestart] loading"
+WD="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 # shellcheck source=common/fn.sh
 source "$ROOT_DIR/common/fn.sh"
 
 echo "[prestart] make config file"
-filter_file "${ROOT_DIR}/services/dns/dispatch/files/config-template" >"${STATE_DIRECTORY}/chinadns-config"
+filter_file "${WD}/files/config-template" >"${STATE_DIRECTORY}/chinadns-config"
 
 echo "[prestart] ensure config folder"
 cd "${AppDataDir}/dns/dispatch"
@@ -25,11 +26,11 @@ ensure "force.oversea.list"
 ensure "blacklist.list"
 
 echo "[prestart] update nftables"
-nft add table inet chinadns
-nft add set inet chinadns chnip4 '{ type ipv4_addr; flags interval; }'
-nft add set inet chinadns chnip6 '{ type ipv6_addr; flags interval; }'
 
-nft add set inet chinadns gfwip4 '{ type ipv4_addr; flags interval; }'
-nft add set inet chinadns gfwip6 '{ type ipv6_addr; flags interval; }'
+if ! [[ -e "/var/lib/nftables/router/chinadns-ng.nft" ]]; then
+	mkdir -p /var/lib/nftables/router
+	touch "/var/lib/nftables/router/chinadns-ng.nft"
+fi
+nft -f "${WD}/files/chinadns-ng.nft"
 
 echo "[prestart] success!"

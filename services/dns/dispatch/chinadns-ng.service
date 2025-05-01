@@ -25,6 +25,8 @@ ProtectHome=yes
 PrivateTmp=yes
 
 StateDirectory=dnsdispatch
+ReadWritePaths=/var/lib/nftables/router/
+ReadWritePaths=${AppDataDir}/dns
 InaccessiblePaths=-/etc
 
 Slice=router.slice

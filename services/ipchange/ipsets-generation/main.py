@@ -8,6 +8,8 @@ import sys
 import subprocess
 from typing import TypedDict
 
+__dirname = Path(__file__).parent.absolute()
+
 
 def die(msg):
     print(msg, file=sys.stderr)
@@ -156,7 +158,7 @@ if __name__ == "__main__":
 
     for name, reg in nft.items():
         for family, ips in reg.items():
-            file = STATE_DIRECTORY.joinpath(f"ipset-{name}-{family}.nft")
+            file = STATE_DIRECTORY.joinpath(f"ipset-{name}{family}.nft")
             print(f"writing {file.name} with {len(ips)} elements.")
             if len(ips) == 0:
                 file.write_text("")
@@ -167,13 +169,25 @@ if __name__ == "__main__":
                 r += "}"
                 file.write_text(r)
 
-    entry_file = Path(__file__).parent.joinpath("ipsets.nft").absolute().as_posix()
-    succ = exec_result("nft", "-f", entry_file)
-    if not succ:
-        die("nft command failed: nft -f {entry_file}")
+    entry_file = __dirname.joinpath("ipsets.nft").as_posix()
+    exec_mute(
+        "nft",
+        "--includepath",
+        __dirname.as_posix(),
+        "-f",
+        entry_file,
+    )
 
     def get_elements(set_name: str):
-        json = exec_json("nft", "--json", "list", "set", "inet", "router", set_name)
+        json = exec_json(
+            "nft",
+            "--json",
+            "list",
+            "set",
+            "inet",
+            "router",
+            set_name,
+        )
         ret = []
         for m in json["nftables"][1]["set"]["elem"]:
             if type(m) == str:
@@ -182,13 +196,12 @@ if __name__ == "__main__":
                 ret.append(f"{m['prefix']['addr']}/{m['prefix']['len']}")
         return ret
 
-    nft["lan"]["4"] = get_elements("lan-4")
-    nft["lan"]["6"] = get_elements("lan-6")
-
+    nft["lan"]["4"] = get_elements("lan4")
+    nft["lan"]["6"] = get_elements("lan6")
     did_change = False
     for name, reg in nft.items():
         for family, ips in reg.items():
-            file = Path(f"/etc/firewalld/ipsets/{name}-{family}.xml")
+            file = Path(f"/etc/firewalld/ipsets/{name}{family}.xml")
             print(f"writing {file.name} with {len(ips)} elements.")
 
             inet = "inet" if family == "4" else "inet6"

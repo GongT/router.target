@@ -1,0 +1,28 @@
+set wan4 {
+	type ipv4_addr;
+	include "/var/lib/ipchange/ipset-wan4.nft";
+}
+set wan6 {
+	type ipv6_addr;
+	include "/var/lib/ipchange/ipset-wan6.nft";
+}
+set localhost4 {
+	type ipv4_addr;
+	include "/var/lib/ipchange/ipset-localhost4.nft";
+}
+set localhost6 {
+	type ipv6_addr;
+	include "/var/lib/ipchange/ipset-localhost6.nft";
+}
+set lan4 {
+	type ipv4_addr;
+	flags interval;
+	auto-merge;
+	include "/var/lib/ipchange/ipset-lan4.nft";
+}
+set lan6 {
+	type ipv6_addr;
+	flags interval;
+	auto-merge;
+	include "/var/lib/ipchange/ipset-lan6.nft";
+}

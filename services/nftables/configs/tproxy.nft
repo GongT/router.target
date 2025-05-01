@@ -1,0 +1,17 @@
+table inet transparent_proxy {
+
+	chain prerouting {
+		type nat hook prerouting priority filter;
+		# iifname "vlan<Private>" tcp dport { 53 } dnat to <PublicIP> counter accept comment "transparent proxying DNS/TCP"
+		# iifname "vlan<Private>" udp dport { 53 } dnat to <PublicIP> counter accept comment "transparent proxying DNS/UDP"
+	}
+	chain forward {
+		type filter hook forward priority 1;
+		# ip saddr == @cluster_prefixes ip daddr { <PublicIP> } tcp dport { 53 } counter accept comment "forwarding DNS/TCP"
+		# ip saddr == @cluster_prefixes ip daddr { <PublicIP> } udp dport { 53 } counter accept comment "forwarding DNS/UDP"
+	}
+	chain postrouting {
+		type nat hook postrouting priority filter;
+		# oifname "vlan104009" ip saddr <PrivateNet>/22 ip daddr != { <PublicIP> } counter masquerade comment "snat (networkid: internet)"
+	}
+}

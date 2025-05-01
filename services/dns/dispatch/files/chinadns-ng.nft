@@ -1,0 +1,30 @@
+table inet router {
+	set chnip4 {
+		type ipv4_addr
+		flags interval
+	}
+
+	set chnip6 {
+		type ipv6_addr
+		flags interval
+	}
+
+	set gfwip4 {
+		type ipv4_addr
+		flags interval
+	}
+
+	set gfwip6 {
+		type ipv6_addr
+		flags interval
+	}
+}
+
+flush set inet router chnip4;
+flush set inet router gfwip4;
+flush set inet router chnip6;
+flush set inet router gfwip6;
+
+table inet router {
+	include "/var/lib/nftables/router/chinadns-ng.nft"
+}

@@ -1,0 +1,7 @@
+table inet dns_capture {
+	chain route_lan_dns {
+		type filter hook prerouting priority dstnat;
+
+		tcp dport {53} ip saddr != @router::localhost-4  ip saddr != @router::localhost-6 accept;
+	}
+}

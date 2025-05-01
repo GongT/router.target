@@ -9,7 +9,7 @@ CHANGE=no
 RULES=''
 for L in "${LINES[@]}"; do
 	RULES+=$'  <rule family="ipv4">\n'
-	RULES+=$'    <destination ipset="wan-4" />\n'
+	RULES+=$'    <destination ipset="wan4" />\n'
 	RULES+="    ${L}"$'\n'
 	RULES+=$'  </rule>\n'
 done
@@ -31,13 +31,6 @@ handle() {
 	echo "$FILE file changed"
 
 	CHANGE=yes
-
-	local OLD_FILE="/etc/firewalld/policies/$FILE.xml.old"
-	rm -f "$OLD_FILE"
-
-	if [[ -e $FPATH ]]; then
-		mv "$FPATH" "$OLD_FILE"
-	fi
 
 	echo "$DATA" >"$FPATH"
 }

@@ -14,9 +14,9 @@ group-dnl ${AppDataDir}/dns/dispatch/blacklist.list
 group-upstream tcp://::1#8807
 
 add-tagchn-ip
-ipset-name4 inet@chinadns@chnip4
-ipset-name6 inet@chinadns@chnip6
-add-taggfw-ip inet@chinadns@gfwip4,inet@chinadns@gfwip6
+ipset-name4 inet@router@chnip4
+ipset-name6 inet@router@chnip6
+add-taggfw-ip inet@router@gfwip4,inet@router@gfwip6
 
 timeout-sec 10
 

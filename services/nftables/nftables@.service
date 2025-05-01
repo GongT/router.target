@@ -1,0 +1,18 @@
+[Unit]
+Description=simple nftables state holder
+Before=network-pre.target
+
+[Install]
+WantedBy=network-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/bash "${PWD}/scripts/start.sh" "%I"
+ExecStop=/usr/bin/bash "${PWD}/scripts/stop.sh" "%I"
+Environment=EXTRA_CONFIG_PATH=${AppDataDir}/firewall
+
+ConfigurationDirectory=nftables
+StateDirectory=nftables
+
+Slice=router.slice
