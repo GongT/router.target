@@ -1,0 +1,13 @@
+[Unit]
+Description=this service restarts on interface "%I" IP address changes
+ConditionPathExists=|${AppDataDir}/ipchange/%I.sh
+ConditionPathExists=|${__dirname}/scripts/on-%I-change.sh
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+Restart=no
+ExecStart=/usr/bin/bash '${__dirname}/scripts/try-call.sh' "%I"
+Environment=APP_DATA_DIR=${AppDataDir}
+
+Slice=router.slice

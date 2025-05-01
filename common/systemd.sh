@@ -12,7 +12,7 @@ function systemd_add_unit() {
 	elif [[ -e $1 ]]; then
 		SOURCE="$1"
 	else
-		die "missing systemd unit file"
+		die "missing systemd unit file: $INSTALL_NAME"
 	fi
 
 	if [[ $SOURCE == *.service ]] && ! grep -qF "Slice=router.slice" "$SOURCE"; then
@@ -21,7 +21,17 @@ function systemd_add_unit() {
 
 	filter_file "$SOURCE" >"$TARGET"
 	echo "  * systemd unit file: $(basename "$SOURCE") -> $TARGET"
-	REGISTERD_UNITS+=("$INSTALL_NAME")
+
+	if [[ ${INSTALL_NAME} == *@.* ]]; then
+		:
+	else
+		REGISTERD_UNITS+=("$INSTALL_NAME")
+	fi
+}
+
+function systemd_enable_unit() {
+	local WHAT=$1
+	REGISTERD_UNITS+=("$WHAT")
 }
 
 function systemd_override() {

@@ -1,8 +1,6 @@
 [Unit]
 Description=check ip change, and run ddns
 After=pppoe.service systemd-resolved.service
-StartLimitBurst=12
-StartLimitIntervalSec=30min
 
 [Service]
 Type=oneshot

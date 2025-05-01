@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+systemctl restart dnsdispatch firewalld systemd-networkd systemd-resolved

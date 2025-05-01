@@ -1,0 +1,3 @@
+systemd_add_unit ipchange-monitor.service
+systemd_add_unit ipchange@.service
+systemd_add_unit ipchange.service

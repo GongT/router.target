@@ -1,8 +1,8 @@
 [Unit]
 Description=sing-box proxy server
 Documentation=https://github.com/SagerNet/sing-box
-After=network-online.target pppoe.service systemd-resolved.service proxy-subscription-update.service
-# Requires=proxy-subscription-update.service
+After=network-online.target pppoe.service systemd-resolved.service
+Requires=proxy-subscription-update.timer
 
 [Install]
 WantedBy=router.target

@@ -1,11 +1,10 @@
 [Unit]
-Description=run ddns every 5 min
+Description=force run ddns every 30 min even no IP changes (normaly run by ipchange)
 After=pppoe.service systemd-resolved.service
-Requires=pppoe.service
 
 [Install]
 WantedBy=router.target
 
 [Timer]
-OnUnitInactiveSec=5min
-OnBootSec=30s
+OnUnitInactiveSec=30min
+OnBootSec=5min

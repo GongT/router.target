@@ -1,0 +1,14 @@
+[Unit]
+Description=listen all IP address changes
+After=pppoe.service systemd-networkd.service network-online.target
+
+[Install]
+WantedBy=router.target
+
+[Service]
+Type=exec
+Restart=always
+ExecStart=/usr/bin/python3 -u "${__dirname}/scripts/ipchange-monitor.py"
+RestartSec=10
+
+Slice=router.slice
