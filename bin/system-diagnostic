@@ -56,7 +56,6 @@ SEV_NAMES=(
 	systemd-networkd.service
 	systemd-resolved.service
 	pppoe.service
-	firewalld.service
 	dhcp.service
 	dnsdispatch.service
 	dnsconvert.service
@@ -65,16 +64,30 @@ SEV_NAMES=(
 	list-download.timer
 	tlds-download.timer
 	acme-renew.timer
-	natloopback.path
-	clash-subscription-processor.service
 	proxy-subscription-update.timer
 	proxy.service
 	wireguard-dns.service
+	ipchange-monitor.service
+)
+SEV_NAMES_MUTE=(
+	firewalld.service
+	natloopback.path
+	clash-subscription-processor.service
+	ipsets-generation.service
+	miniupnpd.service
 )
 declare -i ERR=0
 for I in "${SEV_NAMES[@]}"; do
 	if systemctl is-active -q "$I"; then
 		echo -n "$(success "$I ")"
+	else
+		echo -n "$(error "$I ")"
+		ERR+=1
+	fi
+done
+for I in "${SEV_NAMES_MUTE[@]}"; do
+	if systemctl is-active -q "$I"; then
+		:
 	else
 		echo -n "$(error "$I ")"
 		ERR+=1

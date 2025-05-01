@@ -1,0 +1,36 @@
+table inet router {
+	set wan-4 {
+		type ipv4_addr;
+		include "/var/lib/ipchange/ipset-wan-4.nft";
+	}
+	set wan-6 {
+		type ipv6_addr;
+		include "/var/lib/ipchange/ipset-wan-6.nft";
+	}
+	set localhost-4 {
+		type ipv4_addr;
+		include "/var/lib/ipchange/ipset-localhost-4.nft";
+	}
+	set localhost-6 {
+		type ipv6_addr;
+		include "/var/lib/ipchange/ipset-localhost-6.nft";
+	}
+	set lan-4 {
+		type ipv4_addr;
+        flags interval;
+        auto-merge;
+		include "/var/lib/ipchange/ipset-lan-4.nft";
+
+        # Add elements to the set
+        elements = {
+            192.168.1.0,
+        }
+		
+	}
+	set lan-6 {
+		type ipv6_addr;
+        flags interval;
+        auto-merge;
+		include "/var/lib/ipchange/ipset-lan-6.nft";
+	}
+}

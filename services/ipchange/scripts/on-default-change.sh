@@ -2,4 +2,4 @@
 set -Eeuo pipefail
 shopt -s inherit_errexit extglob nullglob globstar lastpipe shift_verbose
 
-echo "yay!!!"
+

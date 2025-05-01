@@ -1,0 +1,16 @@
+[Unit]
+Description=generate several ipset lists when IP address changes
+Before=firewalld.service
+
+[Install]
+WantedBy=router.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+Restart=no
+ExecStart=/usr/bin/python3 -u "${__dirname}/main.py"
+
+StateDirectory=ipchange
+
+Slice=router.slice

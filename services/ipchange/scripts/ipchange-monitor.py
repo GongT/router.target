@@ -147,7 +147,7 @@ def monitor_ip():
     print("initialize run...")
     execute_script(state)
 
-    print("starting IP monitor...")
+    print("waitting IP changes...")
     try:
         # Start the subprocess for "ip monitor address"
         process = subprocess.Popen(

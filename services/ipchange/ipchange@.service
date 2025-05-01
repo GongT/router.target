@@ -10,4 +10,6 @@ Restart=no
 ExecStart=/usr/bin/bash '${__dirname}/scripts/try-call.sh' "%I"
 Environment=APP_DATA_DIR=${AppDataDir}
 
+StateDirectory=ipchange
+
 Slice=router.slice
