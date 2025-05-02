@@ -1,13 +1,14 @@
 [Unit]
 Description=Lightweight UPnP IGD daemon
 Documentation=man:miniupnpd(8)
+Requires=nftables@miniupnpd.service
+After=nftables@miniupnpd.service
 
 [Service]
 Type=notify
 WorkingDirectory=${__dirname}/scripts
 ExecStart=/usr/bin/bash "execute.sh"
-ExecStartPre=/usr/bin/bash "firewall-create.sh"
-ExecStopPost=/usr/bin/bash "firewall-remove.sh"
+ExecStartPre=/usr/bin/touch /var/lib/miniupnpd/leases
 
 RestartSec=30s
 Restart=on-failure

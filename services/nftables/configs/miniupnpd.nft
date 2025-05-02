@@ -1,0 +1,14 @@
+chain forward {
+	type filter hook forward priority filter; policy accept;
+	ct state established,related accept;
+}
+
+chain prerouting {
+	type nat hook prerouting priority dstnat; policy accept;
+	ct state established,related accept;
+}
+
+chain postrouting {
+	type nat hook postrouting priority srcnat; policy accept;
+	ct state established,related accept;
+}

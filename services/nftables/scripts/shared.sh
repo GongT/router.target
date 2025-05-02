@@ -52,9 +52,11 @@ STATEDIR="${STATE_DIRECTORY}/${TABLE}"
 mkdir -p "${STATE_DIRECTORY}"
 chmod 0777 "${STATE_DIRECTORY}"
 
-find "${STATEDIR}" -name '*.nft' -type f -print0 | while IFS= read -r -d '' FILE; do
-	CONFIG_LIST+=("$FILE")
-done
+if [[ -d "${STATEDIR}" ]]; then
+	find "${STATEDIR}" -name '*.nft' -type f -print0 | while IFS= read -r -d '' FILE; do
+		CONFIG_LIST+=("$FILE")
+	done
+fi
 
 CONFIG_FILE="${STATE_DIRECTORY}/${TABLE}.nft"
 CONFIG_FILE_FLUSHED="${STATE_DIRECTORY}/${TABLE}-flushed.nft"
@@ -63,7 +65,7 @@ echo "
 table inet ${TABLE} {}
 flush table inet ${TABLE};
 
-$(nft --json list table  inet router  | jq -r '.nftables[].chain.name | select(.) | "delete chain inet router "+.')
+$(nft --json list table inet ${TABLE}  | jq -r '.nftables[].chain.name | select(.) | "delete chain inet '${TABLE}' "+.')
 
 include \"${TABLE}.nft\";
 " >"${CONFIG_FILE_FLUSHED}"
