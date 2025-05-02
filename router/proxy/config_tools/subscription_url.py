@@ -1,20 +1,12 @@
 import json
-from .functions import (
-    base64_decode,
-    is_dict_empty,
-    die,
-    dump_json,
-    note,
-    dict_pop,
-    error,
-)
-
 import urllib.parse
-import base64
 from typing import TypedDict
 
+from ...target import dump_json, logger
+from .functions import base64_decode, dict_pop, is_dict_empty
 
-class AbsLinkObj(TypedDict, total=False):
+
+class AbsLinkObj(TypedDict):
     protocol: str
     title: str
     v: str
@@ -53,7 +45,7 @@ def parse_url(url: str):
     vmess = "vmess://"
     ss = "ss://"
     trojan = "trojan://"
-    link = AbsLinkObj()
+    link: AbsLinkObj = {}
     if url.startswith(ss):
         link["protocol"] = "ss"
         parse_ss_url(link, url[len(ss) :])
@@ -64,7 +56,7 @@ def parse_url(url: str):
         link["protocol"] = "trojan"
         parse_trojan_url(link, url[len(trojan) :])
     else:
-        error(
+        logger.error(
             "ERROR: This script supports only vmess://(N/NG), ss://, and trojan:// links\nURL: "
             + url
         )
@@ -97,7 +89,6 @@ def parse_ss_url(link: AbsLinkObj, data: str):
     link["port"] = int(port)
     link["method"] = method
     link["password"] = password
-    return link
 
 
 def parse_vmess_url(link: AbsLinkObj, data: str):
@@ -129,7 +120,7 @@ def parse_vmess_url(link: AbsLinkObj, data: str):
     link["class_"] = dict_pop(body, "class")
 
     if not is_dict_empty(body):
-        note("未知vmess url字段: " + dump_json(body, None) + "\nURL: " + text)
+        logger.dim("未知vmess url字段: " + dump_json(body, None) + "\nURL: " + text)
 
 
 def parse_trojan_url(link: AbsLinkObj, data: str):
@@ -159,5 +150,3 @@ def parse_trojan_url(link: AbsLinkObj, data: str):
         link["tls_server_name"] = sni[0]
 
     peer = qs.get("peer")
-
-    return link

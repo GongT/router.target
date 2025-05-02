@@ -1,5 +1,5 @@
 [Unit]
-Description=sing-box proxy server
+Description=proxy server for DNS only (on port 5342-5347)
 Documentation=https://github.com/SagerNet/sing-box
 After=network-online.target pppoe.service systemd-resolved.service
 Requires=proxy-subscription-update.timer
@@ -9,10 +9,8 @@ WantedBy=router.target
 
 [Service]
 Type=exec
-ExecStartPre=+/usr/bin/rm -f "subscription.json"
-ExecStartPre=+${PYTHON3} "${__dirname}/helpers/convert-user-lists.py"
 ExecStartPre=+${PYTHON3} "${__dirname}/helpers/create-config-file.py"
-ExecStart=${DIST_ROOT}/sing-box/sing-box --disable-color --directory "${STATE_DIRECTORY}" --config "subscription.json" run
+ExecStart=${DIST_ROOT}/sing-box/sing-box --disable-color --directory "${STATE_DIRECTORY}" --config "dnsproxy.json" run
 WorkingDirectory=/var/lib/proxy
 RestartPreventExitStatus=66
 

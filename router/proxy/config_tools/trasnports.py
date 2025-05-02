@@ -1,9 +1,6 @@
 ########################
 # 链接处理
 ########################
-import json
-from typing import cast
-
 from .data_types.trojan import TrojanOutbound
 
 from .data_types.basic import TlsFields
@@ -11,11 +8,8 @@ from .data_types.basic import TlsFields
 from .subscription_url import AbsLinkObj
 from .data_types.vmess import VMessOutbound, V2RayTransport
 from .data_types.shadowsocks import ShadowSocksOutbound
-from .functions import die, dump_json, note, dict_pop, is_dict_empty
-
-import urllib.parse
-import base64
-
+from .functions import dict_pop, is_dict_empty
+from ...target import die, logger, dump_json
 
 def create_transport_object(
     ln: AbsLinkObj,
@@ -27,7 +21,7 @@ def create_transport_object(
     elif protocol == "vmess":
         version = int(ln.get("v", 0))
         if version != 2:
-            note("ignore invalid link: URL: " + dump_json(ln, None))
+            logger.dim("ignore invalid link: URL: " + dump_json(ln, None))
             return
         ln.pop("v", None)
 
@@ -41,7 +35,7 @@ def create_transport_object(
     ln.pop("class_", None)
 
     if not is_dict_empty(ln):
-        note(
+        logger.dim(
             "未知连接信息字段: "
             + ", ".join(ln.keys())
             + "\nURL: "
@@ -93,7 +87,7 @@ def transport_make_vmess(link: AbsLinkObj) -> VMessOutbound | None:
             r["tls"]["server_name"] = sn
 
     if net == "kcp":
-        note(f"unsupported transport: KCP ({tagName})")
+        logger.dim(f"unsupported transport: KCP ({tagName})")
         return None
     elif net == "ws":
         r["transport"] = V2RayTransport(
@@ -104,14 +98,14 @@ def transport_make_vmess(link: AbsLinkObj) -> VMessOutbound | None:
         if sn:
             r["transport"]["headers"] = {"Host": sn}
     elif net == "h2":
-        note(f"not implemented transport: H2 ({tagName})")
+        logger.dim(f"not implemented transport: H2 ({tagName})")
         return None
     elif net == "quic":
-        note(f"not implemented transport: QUIC ({tagName})")
+        logger.dim(f"not implemented transport: QUIC ({tagName})")
         return None
     elif net == "tcp":
         if transport == "http":
-            note(f"not implemented transport: HTTP ({tagName})")
+            logger.dim(f"not implemented transport: HTTP ({tagName})")
             return None
         elif transport == "" or transport == "none":
             pass

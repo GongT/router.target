@@ -33,7 +33,7 @@ if "VIRTUAL_ENV" in os.environ:
     del os.environ["VIRTUAL_ENV"]
 
 os.environ["POETRY_VIRTUALENVS_PATH"] = LIBEXEC_ROOT.as_posix()
-os.environ["POETRY_VIRTUALENVS_PROMPT"] = "(router.target) "
+os.environ["POETRY_VIRTUALENVS_PROMPT"] = "router.target"
 
 write_if_change(
     Path("/etc/profile.d/router.sh"),
@@ -44,10 +44,12 @@ fi
 """,
 )
 
+logger.info("using libexec root: " + LIBEXEC_ROOT.as_posix())
+
 LIBEXEC_ROOT.mkdir(exist_ok=True, parents=True)
 ts = TimestampFile(LIBEXEC_ROOT / "last_install_pyenv", 60 * 60 * 12)
 if ts.is_expired():
-    execute_passthru("poetry", "install", "--no-root", "--sync")
+    execute_passthru("poetry", "install", "--sync")
 else:
     logger.dim("pyenv is up to date, skipping poetry install (--force to update)")
 

@@ -1,13 +1,12 @@
 ########################
 # chinadns config bridge
 ########################
-from pathlib import Path
 import traceback
+from pathlib import Path
 
 import idna
 
-from config_tools.functions import dump_json
-from config_tools.env import APP_DATA_DIR, STATE_DIR
+from router.target import APP_DATA_DIR, dump_json, proxy
 
 
 def parse_domain_list(file: Path):
@@ -53,7 +52,7 @@ def create_ruleset_file(source: Path, output: Path, additinal_domains=[]):
 
 ####### DOMAINS
 DOMAINS_DIR = Path(APP_DATA_DIR).joinpath("dns/dispatch")
-RULES_DIR = Path(STATE_DIR).joinpath("my-rules")
+RULES_DIR = Path(proxy.STATE_DIR).joinpath("my-rules")
 
 RULES_DIR.mkdir(exist_ok=True)
 

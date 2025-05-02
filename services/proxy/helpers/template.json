@@ -15,7 +15,7 @@
 			},
 			{
 				"type": "udp",
-				"tag": "dns.direct",
+				"tag": "dns.china",
 				"server": "::1",
 				"server_port": 5305,
 				"detour": "out.lo"

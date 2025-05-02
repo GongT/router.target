@@ -1,16 +1,16 @@
 [tool.poetry]
-name = "router-target"
+name = "router"
 version = "0.1.0"
 description = ""
 authors = ["GongT <admin@gongt.me>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "router"}]
-package-mode = false
+package-mode = true
 
 [tool.poetry.dependencies]
 python = "^3.13"
 python-dotenv = "^1.1.0"
+commentjson = "^0.9.0"
 
 [tool.poetry.group.dev.dependencies]
 PyGithub = "^2.6.1"

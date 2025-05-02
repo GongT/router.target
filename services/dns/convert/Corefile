@@ -1,4 +1,4 @@
-# oversea: -> clash
+# oversea: -> dnsproxy.service
 .:5305 {
 	bind ::1
 	cache {
@@ -17,8 +17,6 @@
 	errors
 
 	forward . [::1]:5342 [::1]:5343 [::1]:5344 [::1]:5345 [::1]:5346 [::1]:5347 {
-		force_tcp
-		
 		max_fails 5
 		health_check 5s
 		max_concurrent 100

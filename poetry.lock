@@ -207,6 +207,24 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 reference = "aliyun"
 
 [[package]]
+name = "commentjson"
+version = "0.9.0"
+description = "Add Python and JavaScript style comments in your JSON files."
+optional = false
+python-versions = "*"
+files = [
+    {file = "commentjson-0.9.0.tar.gz", hash = "sha256:42f9f231d97d93aff3286a4dc0de39bfd91ae823d1d9eba9fa901fe0c7113dd4"},
+]
+
+[package.dependencies]
+lark-parser = ">=0.7.1,<0.8.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "aliyun"
+
+[[package]]
 name = "cryptography"
 version = "44.0.2"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
@@ -303,6 +321,21 @@ files = [
 
 [package.extras]
 all = ["flake8 (>=7.1.1)", "mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "aliyun"
+
+[[package]]
+name = "lark-parser"
+version = "0.7.8"
+description = "a modern parsing library"
+optional = false
+python-versions = "*"
+files = [
+    {file = "lark-parser-0.7.8.tar.gz", hash = "sha256:26215ebb157e6fb2ee74319aa4445b9f3b7e456e26be215ce19fdaaa901c20a4"},
+]
 
 [package.source]
 type = "legacy"
@@ -584,4 +617,4 @@ reference = "aliyun"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.13"
-content-hash = "efedbd01c66518e23eedba4776862ca746f9c1b9683b86a18d227ec672168c5a"
+content-hash = "1b50fc59982fdae65f270f123ba81e74d92427dc0fc549768e167c4aa01c0ec0"

@@ -1,2 +1,2 @@
 [virtualenvs]
-prompt = "(router.target) "
+prompt = "router.target"

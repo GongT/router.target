@@ -80,4 +80,4 @@ class UDPOverTCP(TypedDict, total=False):
     version: int
 
 class BaseOutbound(TypedDict, total=False):
-    _provider: str
+    pass
