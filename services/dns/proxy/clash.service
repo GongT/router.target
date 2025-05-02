@@ -7,7 +7,7 @@ WantedBy=router.target
 
 [Service]
 Type=exec
-ExecStart="${DistBinaryDir}/clash/bin/clash" -d "${__dirname}/clash" -ext-ui "${DistBinaryDir}/clash/yacd/public"
+ExecStart="${DIST_ROOT}/clash/bin/clash" -d "${__dirname}/clash" -ext-ui "${DIST_ROOT}/clash/yacd/public"
 
 RestartSec=5s
 Restart=on-failure
@@ -20,7 +20,5 @@ ProtectHome=yes
 
 BindReadOnlyPaths=${__dirname}/clash/resolv.conf:/etc/resolv.conf
 ReadWritePaths="${__dirname}/clash"
-
-Slice=router.slice
 
 CapabilityBoundingSet=CAP_NET_ADMIN+EP

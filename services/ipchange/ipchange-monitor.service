@@ -8,9 +8,7 @@ WantedBy=router.target
 [Service]
 Type=exec
 Restart=always
-ExecStart=/usr/bin/python3 -u "${__dirname}/scripts/ipchange-monitor.py"
+ExecStart=${PYTHON3} -u "${__dirname}/scripts/ipchange-monitor.py"
 RestartSec=10
 
 StateDirectory=ipchange
-
-Slice=router.slice

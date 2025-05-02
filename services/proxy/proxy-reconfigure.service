@@ -6,5 +6,3 @@ Type=oneshot
 Restart=no
 # todo
 # ExecStart=
-
-Slice=router.slice

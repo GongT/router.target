@@ -1,11 +1,11 @@
-import commentjson as json
-from pathlib import Path
 from os import path
+from pathlib import Path
 
-from config_tools.functions import die, dump_json
-from config_tools.data_types.vmess import V2RayTransport
+import commentjson as json
 from config_tools.data_types.shadowsocks import ShadowSocksOutbound
-from config_tools.env import APP_DATA_DIR, OUTPUT_FILE, STATE_DIR
+from config_tools.data_types.vmess import V2RayTransport
+from config_tools.env import APP_DATA_DIR, DIST_DIR, OUTPUT_FILE, STATE_DIR
+from config_tools.functions import die, dump_json
 from config_tools.subscription_url import parse_url
 from config_tools.trasnports import create_transport_object
 
@@ -100,7 +100,7 @@ for ob in outbounds:
     used_domains.add(ob["server"])
 
 template = Path(__file__).parent.joinpath("template.json").read_text()
-template = template.replace("${AppDataDir}", APP_DATA_DIR)
+template = template.replace("${APP_DATA_DIR}", APP_DATA_DIR)
 config = json.loads(template)
 
 
@@ -145,6 +145,10 @@ for ob in inputObs:
         ob["outbounds"] += outboundTitles
 
 config["outbounds"] = inputObs + outbounds
+
+config["experimental"]["clash_api"]["external_ui"] = Path(
+    DIST_DIR, "sing-box/webui"
+).as_posix()
 
 print(f"write to file: {OUTPUT_FILE}")
 with open(OUTPUT_FILE, "wt") as f:

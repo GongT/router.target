@@ -8,7 +8,7 @@ WantedBy=router.target
 
 [Service]
 Type=exec
-ExecStart="${DistBinaryDir}/core/coredns" -conf "${__dirname}/Corefile"
+ExecStart="${DIST_ROOT}/core/coredns" -conf "${__dirname}/Corefile"
 
 RestartSec=5s
 Restart=on-failure
@@ -18,5 +18,3 @@ PrivateDevices=yes
 ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=yes
-
-Slice=router.slice

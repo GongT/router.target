@@ -1,5 +1,8 @@
+##### ROUTER GENERATED
+## source=/data/DevelopmentRoot/github.com/gongt/router.target/assets/router.target
+
 [Unit]
-Description=OpenWRT router and related service
+Description=Linux router and related service
 After=local-fs.target
 Requires=multi-user.target
 Conflicts=rescue.service rescue.target shutdown.target

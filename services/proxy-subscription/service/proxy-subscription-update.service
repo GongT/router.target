@@ -1,0 +1,24 @@
+[Unit]
+Description=update subscription file for proxy server
+After=network-online.target pppoe.service systemd-resolved.service
+
+[Service]
+Type=oneshot
+ExecStartPre=+/usr/bin/chown proxy:proxy /var/lib/proxy -R
+ExecStart=${PYTHON3} "${__dirname}/update-subscription.py"
+
+Environment="INPUT_FILE=${APP_DATA_DIR}/proxy/subscription.txt"
+WorkingDirectory=/var/lib/proxy
+
+Restart=no
+TimeoutStartSec=10min
+
+ProtectSystem=strict
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectHome=yes
+PrivateTmp=yes
+
+User=proxy
+StateDirectory=proxy

@@ -1,0 +1,47 @@
+
+
+chain redirect_dns {
+	# 否则（即将向公网发送DNS），重定向回本机
+	ip daddr != @localhost4 tcp dport 53 redirect to :53;
+	ip daddr != @localhost4 udp dport 53 redirect to :53;
+	ip6 daddr != @localhost6 tcp dport 53 redirect to :53;
+	ip6 daddr != @localhost6 udp dport 53 redirect to :53;
+}
+chain redirect_dns6 {
+	# 	ip6 daddr != @localhost6 tcp dport 53 dnat to 10.0.0.1:53;
+	# 	ip6 daddr != @localhost6 udp dport 53 dnat to 10.0.0.1:53;
+}
+
+chain trace_chain {
+	type nat hook output priority -1;
+	tcp dport 53 meta nftrace set 1;
+}
+
+chain input {
+	type filter hook input priority filter;
+
+	ip dattr = 169.254.169.254 reject with icmp-admin-prohibited;
+}
+
+chain prerouting {
+	type nat hook prerouting priority filter;
+
+	iifname != "wan" jump redirect_dns;
+	iifname != "ppp0" jump redirect_dns;
+}
+chain forward {
+	type filter hook forward priority 1;
+}
+chain postrouting {
+	type nat hook postrouting priority filter;
+}
+
+chain output {
+	type nat hook output priority filter;
+
+	# OUTPUT链是本机发出的请求，如果出口是公网，就转给本机dns
+	# oifname "wan" jump redirect_dns;
+	# oifname "ppp0" jump redirect_dns;
+
+	ip dattr = 169.254.169.254 reject with icmp-admin-prohibited;
+}

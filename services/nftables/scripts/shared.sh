@@ -48,18 +48,27 @@ declare -r TABLE="${1}"
 CONFIG_LIST=("${EXTRA_CONFIG_PATH:-/data/AppData/router/firewall}/${TABLE}.nft"
 	"${MY_DIR}/configs/${TABLE}.nft"
 )
-STATED="${STATE_DIRECTORY}/${TABLE}"
-mkdir -p "${STATED}"
-chmod 0777 "${STATED}"
+STATEDIR="${STATE_DIRECTORY}/${TABLE}"
+mkdir -p "${STATE_DIRECTORY}"
+chmod 0777 "${STATE_DIRECTORY}"
 
-find "${STATED}" -name '*.nft' -type f -print0 | while IFS= read -r -d '' FILE; do
+find "${STATEDIR}" -name '*.nft' -type f -print0 | while IFS= read -r -d '' FILE; do
 	CONFIG_LIST+=("$FILE")
 done
 
 CONFIG_FILE="${STATE_DIRECTORY}/${TABLE}.nft"
+CONFIG_FILE_FLUSHED="${STATE_DIRECTORY}/${TABLE}-flushed.nft"
 
-echo "flush table inet ${TABLE};" >"${CONFIG_FILE}"
-echo "table inet ${TABLE} {" >>"${CONFIG_FILE}"
+echo "
+table inet ${TABLE} {}
+flush table inet ${TABLE};
+
+$(nft --json list table  inet router  | jq -r '.nftables[].chain.name | select(.) | "delete chain inet router "+.')
+
+include \"${TABLE}.nft\";
+" >"${CONFIG_FILE_FLUSHED}"
+
+echo "table inet ${TABLE} {" >"${CONFIG_FILE}"
 
 for FILE in "${CONFIG_LIST[@]}"; do
 	if [[ -f $FILE ]]; then
@@ -72,7 +81,8 @@ unset FILE TRIED_PATHS TRY_FILES
 
 NFT=$(command -v nft)
 nft() {
-	"${NFT}" --file "$CONFIG_FILE" "$@"
+	echo "$ nft --includepath ${STATE_DIRECTORY} $*"
+	"${NFT}" --includepath "${STATE_DIRECTORY}" "$@"
 }
 
 declare -r NFT CONFIG_FILE STATE_DIRECTORY

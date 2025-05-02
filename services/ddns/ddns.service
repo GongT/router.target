@@ -6,7 +6,7 @@ After=pppoe.service systemd-resolved.service
 Type=oneshot
 RemainAfterExit=no
 ExecStart=/bin/bash "${__dirname}/run.sh"
-EnvironmentFile=${AppDataDir}/ddns/config.sh
+EnvironmentFile=${APP_DATA_DIR}/ddns/config.sh
 
 RestartPreventExitStatus=66
 Restart=on-failure
@@ -14,5 +14,4 @@ RestartSec=30s
 
 StateDirectory=ddns
 RuntimeDirectory=ddns
-Slice=router.slice
 CPUWeight=90

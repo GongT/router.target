@@ -2,6 +2,7 @@
 	"search.exclude": {
 		"**/.vscode/local-history": true,
 		".config/**": true,
+		".outputs/**": true,
 	},
 	"files.associations": {
 		"*.json": "jsonc"
@@ -13,5 +14,6 @@
 		"**/.*",
 		".config"
 	],
-	"remote.autoForwardPorts": false
+	"remote.autoForwardPorts": false,
+	"python.envFile": "${workspaceFolder}/.env"
 }

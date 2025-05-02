@@ -1,8 +1,10 @@
+##### ROUTER GENERATED
+## source=/data/DevelopmentRoot/github.com/gongt/router.target/assets/router.slice
+
 [Unit]
 Description=Linux Router
-
-[Install]
 
 [Slice]
 CPUWeight=100
 CPUQuota=60%
+

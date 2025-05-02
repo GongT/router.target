@@ -73,12 +73,12 @@ SEV_NAMES_MUTE=(
 	firewalld.service
 	natloopback.path
 	clash-subscription-processor.service
-	ipsets-generation.service
+	ipsets-generate.service
 	miniupnpd.service
 )
 declare -i ERR=0
 for I in "${SEV_NAMES[@]}"; do
-	if systemctl is-active -q "$I"; then
+	if  systemctl is-active -q "$I"; then
 		echo -n "$(success "$I ")"
 	else
 		echo -n "$(error "$I ")"

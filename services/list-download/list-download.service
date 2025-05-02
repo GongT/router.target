@@ -11,5 +11,3 @@ Type=oneshot
 Restart=on-failure
 TimeoutStartSec=infinity
 RestartSec=10s
-
-Slice=router.slice

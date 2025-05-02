@@ -9,8 +9,8 @@ WantedBy=router.target
 [Service]
 Type=forking
 GuessMainPID=yes
-ExecStartPre=-/usr/bin/mkdir -p ${AppDataDir}/pppoe
-ExecStart=${PWD}/pppoe.sh
+ExecStartPre=-/usr/bin/mkdir -p ${APP_DATA_DIR}/pppoe
+ExecStart=${__dirname}/pppoe.sh
 TimeoutStartSec=10s
 KillSignal=SIGHUP
 
@@ -27,8 +27,6 @@ ProtectHome=yes
 
 StateDirectory=pppoe
 
-BindReadOnlyPaths=${PWD}/helpers:/run/config/lower
-BindPaths=${AppDataDir}/pppoe:/run/config/upper
+BindReadOnlyPaths=${__dirname}/helpers:/run/config/lower
+BindPaths=${APP_DATA_DIR}/pppoe:/run/config/upper
 TemporaryFileSystem=/etc/ppp
-
-Slice=router.slice

@@ -15,8 +15,6 @@ Alias=dnsmasq.service
 ExecStart=/usr/sbin/dnsmasq --keep-in-foreground --conf-file=${__dirname}/dnsmasq.conf --conf-dir=/etc/dnsmasq.d,*.conf
 Type=exec
 
-Slice=router.slice
-
 ProtectSystem=strict
 PrivateDevices=yes
 PrivateTmp=yes

@@ -1,8 +1,0 @@
-[Unit]
-After=systemd-networkd.service
-
-[Service]
-Environment=IF_NAME=%i
-Environment=ROOT=AppDataDir
-ExecStartPost=/bin/bash "${PWD}/create-dnsmasq-config.sh"
-StateDirectory=wireguard

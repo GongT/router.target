@@ -8,7 +8,7 @@ WantedBy=router.target
 
 [Service]
 ExecStartPre=/usr/sbin/ip addr
-ExecStart=/usr/sbin/dnsmasq -k --conf-file=${__dirname}/files/dnsmasq.conf --conf-dir=${AppDataDir}/dhcp,*.conf
+ExecStart=/usr/sbin/dnsmasq -k --conf-file=${__dirname}/files/dnsmasq.conf --conf-dir=${APP_DATA_DIR}/dhcp,*.conf
 Type=exec
 
 RestartSec=5s
@@ -21,5 +21,3 @@ ProtectControlGroups=yes
 ProtectHome=yes
 
 StateDirectory=dhcp
-
-Slice=router.slice

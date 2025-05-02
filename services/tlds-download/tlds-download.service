@@ -2,9 +2,7 @@
 Description=download tlds from iana
 
 [Service]
-ExecStart=/usr/bin/bash "${PWD}/execute.sh"
+ExecStart=/usr/bin/bash "${__dirname}/execute.sh"
 StateDirectory=tlds
 RemainAfterExit=no
 Type=oneshot
-
-Slice=router.slice

@@ -22,7 +22,5 @@ StateDirectory=wireguard
 
 InaccessiblePaths=-/data
 InaccessiblePaths=-/etc/dnsmasq.conf
-BindPaths=${PWD}/config:/etc/dnsmasq.d
-BindPaths=${AppDataDir}/dns/wireguard:/etc/dnsmasq.d/dynamic
-
-Slice=router.slice
+BindPaths=${__dirname}/config:/etc/dnsmasq.d
+BindPaths=${APP_DATA_DIR}/dns/wireguard:/etc/dnsmasq.d/dynamic

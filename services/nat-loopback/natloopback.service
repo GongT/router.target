@@ -9,10 +9,8 @@ StartLimitBurst=10
 Type=oneshot
 RemainAfterExit=no
 GuessMainPID=yes
-ExecStart=/bin/bash ${PWD}/loopback.sh
+ExecStart=/bin/bash ${__dirname}/loopback.sh
 TimeoutStartSec=10s
 
 RestartSec=1s
 Restart=on-failure
-
-Slice=router.slice

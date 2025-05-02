@@ -11,7 +11,7 @@ echo "STATE_DIRECTORY='${STATE_DIRECTORY-}'"
 cd "$STATE_DIRECTORY"
 
 export CONFIG_FILE="${STATE_DIRECTORY}/subscription.json"
-BINARY="${ROOT_DIR:-/opt}/dist/sing-box"
+BINARY="${DIST_ROOT}/sing-box/sing-box"
 
 x() {
 	echo "$*" >&2

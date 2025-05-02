@@ -5,14 +5,12 @@ set -Eeuo pipefail
 echo "[prestart] loading"
 WD="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
-# shellcheck source=common/fn.sh
-source "$ROOT_DIR/common/fn.sh"
 
 echo "[prestart] make config file"
-filter_file "${WD}/files/config-template" >"${STATE_DIRECTORY}/chinadns-config"
+cat "${LIBEXEC_ROOT}/dns/dispatch-config" >"${STATE_DIRECTORY}/chinadns-config"
 
 echo "[prestart] ensure config folder"
-cd "${AppDataDir}/dns/dispatch"
+cd "${APP_DATA_DIR}/dns/dispatch"
 
 function ensure() {
 	if [[ ! -e $1 ]]; then

@@ -1,3 +1,0 @@
-systemd_add_unit proxy.service
-systemd_add_unit subscription/proxy-subscription-update.service
-systemd_add_unit subscription/proxy-subscription-update.timer

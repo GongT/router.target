@@ -4,15 +4,14 @@ Before=network-pre.target
 
 [Install]
 WantedBy=network-pre.target
+DefaultInstance=router
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/bin/bash "${PWD}/scripts/start.sh" "%I"
-ExecStop=/usr/bin/bash "${PWD}/scripts/stop.sh" "%I"
-Environment=EXTRA_CONFIG_PATH=${AppDataDir}/firewall
+ExecStart=/usr/bin/bash "${__dirname}/scripts/start.sh" "%I"
+ExecStop=/usr/bin/bash "${__dirname}/scripts/stop.sh" "%I"
+Environment=EXTRA_CONFIG_PATH=${APP_DATA_DIR}/firewall
 
 ConfigurationDirectory=nftables
 StateDirectory=nftables
-
-Slice=router.slice

@@ -196,6 +196,13 @@ if __name__ == "__main__":
                 ret.append(f"{m['prefix']['addr']}/{m['prefix']['len']}")
         return ret
 
+    inner_file = __dirname.joinpath("ipsets-inner.nft").as_posix()
+    sync_file = Path("/var/lib/nftables/router/ipchange.nft")
+    if not sync_file.exists():
+        sync_file.parent.mkdir(parents=True, exist_ok=True)
+
+    sync_file.write_text(f'include "{inner_file}"\n')
+
     nft["lan"]["4"] = get_elements("lan4")
     nft["lan"]["6"] = get_elements("lan6")
     did_change = False

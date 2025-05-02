@@ -9,7 +9,6 @@ WantedBy=router.target
 
 [Service]
 Type=exec
-Environment="AppDataDir=${AppDataDir}" "ROOT_DIR=${ROOT_DIR}"
 ExecStart=/usr/bin/bash "${__dirname}/helpers/start.sh"
 WorkingDirectory=/var/lib/proxy
 RestartPreventExitStatus=66
@@ -29,5 +28,3 @@ PrivateTmp=yes
 
 LogsDirectory=proxy
 StateDirectory=proxy
-
-Slice=router.slice

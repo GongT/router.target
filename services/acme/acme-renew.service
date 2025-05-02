@@ -6,7 +6,7 @@ StartLimitIntervalSec=1hour
 [Service]
 Type=oneshot
 RemainAfterExit=no
-Environment=NO_TIMESTAMP=1 "ROOT_DIR=${ROOT_DIR}"
+Environment=NO_TIMESTAMP=1
 ExecStart=/usr/bin/bash "${__dirname}/execute.sh"
 RestartPreventExitStatus=66
 Restart=on-failure
@@ -17,8 +17,7 @@ ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=read-only
 
-ReadWritePaths=${AppDataDir}/ACME
-WorkingDirectory=${AppDataDir}/ACME
+ReadWritePaths=${APP_DATA_DIR}/ACME
+WorkingDirectory=${APP_DATA_DIR}/ACME
 
-Slice=router.slice
 CPUWeight=idle

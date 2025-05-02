@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "router-target"
+version = "0.1.0"
+description = ""
+authors = ["GongT <admin@gongt.me>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "router"}]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.13"
+python-dotenv = "^1.1.0"
+
+[tool.poetry.group.dev.dependencies]
+PyGithub = "^2.6.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+priority = "primary"

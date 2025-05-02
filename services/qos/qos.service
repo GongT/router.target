@@ -2,8 +2,6 @@
 Description=QoS setting script for ppp0
 
 [Service]
-ExecStart=/usr/bin/bash "${PWD}/execute.sh"
+ExecStart=/usr/bin/bash "${__dirname}/execute.sh"
 RemainAfterExit=no
 Type=oneshot
-
-Slice=router.slice

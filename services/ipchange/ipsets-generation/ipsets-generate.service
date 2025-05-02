@@ -9,8 +9,6 @@ WantedBy=router.target
 Type=oneshot
 RemainAfterExit=no
 Restart=no
-ExecStart=/usr/bin/python3 -u "${__dirname}/main.py"
+ExecStart=${PYTHON3} -u "${__dirname}/main.py"
 
 StateDirectory=ipchange
-
-Slice=router.slice

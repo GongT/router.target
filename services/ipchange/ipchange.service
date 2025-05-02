@@ -8,5 +8,3 @@ Restart=no
 ExecStart=/usr/bin/bash "${__dirname}/scripts/on-default-change.sh"
 
 StateDirectory=ipchange
-
-Slice=router.slice
