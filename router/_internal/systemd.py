@@ -3,11 +3,15 @@ from pathlib import Path
 
 from . import constants, logger
 from .config_file import KeyValueConfig
-from .constants import UNIT_ROOT, get_working_path, write_if_change
-from .fs import ensure_symlink, read_filtered_file, remove_unknown_files
+from .constants import UNIT_ROOT, get_working_path
+from .fs import (
+    ensure_symlink,
+    read_filtered_file,
+    remove_unknown_files,
+    write_if_change,
+)
 from .subprocess import (
     execute_mute,
-    execute_output,
     execute_output_error,
     execute_passthru,
 )

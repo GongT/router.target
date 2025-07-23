@@ -10,7 +10,7 @@
 				"type": "udp",
 				"tag": "dns.china",
 				"server": "::1",
-				"server_port": 5305,
+				"server_port": 5306,
 				"detour": "out.lo"
 			}
 		],

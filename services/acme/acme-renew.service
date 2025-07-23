@@ -17,7 +17,7 @@ ProtectKernelTunables=yes
 ProtectControlGroups=yes
 ProtectHome=read-only
 
-ReadWritePaths=${APP_DATA_DIR}/ACME
-WorkingDirectory=${APP_DATA_DIR}/ACME
+ReadWritePaths=${ROUTER_DATA_PATH}/ACME
+WorkingDirectory=${ROUTER_DATA_PATH}/ACME
 
 CPUWeight=idle

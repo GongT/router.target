@@ -10,7 +10,7 @@ echo "[prestart] make config file"
 cat "${LIBEXEC_ROOT}/dns/dispatch-config" >"${STATE_DIRECTORY}/chinadns-config"
 
 echo "[prestart] ensure config folder"
-cd "${APP_DATA_DIR}/dns/dispatch"
+cd "${ROUTER_DATA_PATH}/dns/dispatch"
 
 function ensure() {
 	if [[ ! -e $1 ]]; then

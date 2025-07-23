@@ -146,7 +146,7 @@ else
 fi
 
 echo -n "测试systemd-resolved: "
-resolve-systemd "$TEST_HOST" | grep -q NOERROR
+resolve-systemd "$TEST_HOST" | grep -qE "NOERROR|Data from"
 test_last
 
 header "代理"

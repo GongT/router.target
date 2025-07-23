@@ -45,7 +45,7 @@ if [[ $# -ne 1 ]]; then
 fi
 
 declare -r TABLE="${1}"
-CONFIG_LIST=("${EXTRA_CONFIG_PATH:-/data/AppData/router/firewall}/${TABLE}.nft"
+CONFIG_LIST=("${EXTRA_CONFIG_PATH:-${ROUTER_DATA_PATH}/firewall}/${TABLE}.nft"
 	"${MY_DIR}/configs/${TABLE}.nft"
 )
 STATEDIR="${STATE_DIRECTORY}/${TABLE}"

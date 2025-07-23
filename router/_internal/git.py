@@ -8,7 +8,7 @@ from github import Github
 
 from . import logger
 from .action_timestamp import TimestampFile
-from .constants import CACHE_ROOT, DIST_ROOT, TEMPDIR, dotenv_file_content
+from .constants import CACHE_ROOT, DIST_ROOT, TEMPDIR
 from .subprocess import execute_mute, execute_output, execute_passthru
 
 refresh_expires = 60 * 60 * 1
@@ -65,7 +65,7 @@ def git_clone_or_pull(repo_url: str, branch="", alter_name: str | Path | None = 
     return save_path
 
 
-gh_token: str | None = dotenv_file_content.get("GITHUB_TOKEN", None)
+gh_token: str | None = os.environ.get("GITHUB_TOKEN", None)
 if not gh_token:
     logger.warning("GITHUB_TOKEN is required, place it in .env file")
 github_api_instance = None

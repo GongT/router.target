@@ -1,6 +1,6 @@
 [Unit]
 Description=this service restarts on interface "%I" IP address changes
-ConditionPathExists=|${APP_DATA_DIR}/ipchange/%I.sh
+ConditionPathExists=|${ROUTER_DATA_PATH}/ipchange/%I.sh
 ConditionPathExists=|${__dirname}/scripts/on-%I-change.sh
 
 [Service]

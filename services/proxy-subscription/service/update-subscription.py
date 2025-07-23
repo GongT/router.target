@@ -10,13 +10,18 @@ import base64
 import shutil
 import subprocess
 from datetime import datetime
+from dotenv import load_dotenv
+from router.target import constants, logger, proxy
 
 # 加载环境变量
 if os.path.exists("/etc/profile.d/50-environment.sh"):
-    # shell脚本source环境变量，Python中可用subprocess获取
-    subprocess.run(["bash", "-c", "source /etc/profile.d/50-environment.sh"], check=False)
+    print("Loading environment variables")
+    with open("/etc/profile.d/50-environment.sh", "r") as f:
+       load_dotenv(stream=f)
+    PROXY = os.environ.get("PROXY",None)
+    print(f"PROXY='{PROXY}'")
 
-INPUT_FILE = os.environ.get("INPUT_FILE", "/data/AppData/router/proxy/subscription.txt")
+INPUT_FILE = os.environ.get("INPUT_FILE", "${ROUTER_DATA_PATH}/proxy/subscription.txt")
 STATE_DIRECTORY = os.environ.get("STATE_DIRECTORY", "/var/lib/proxy")
 
 print(f"STATE_DIRECTORY='{STATE_DIRECTORY}'")
@@ -30,30 +35,34 @@ def die(msg, code=1):
     print(msg, file=sys.stderr)
     sys.exit(code)
 
-def _wget(*args):
+def _wget(*args, env={}):
     """
     使用wget下载文件
     """
-    print(f"  >> wget {' '.join(args)}", file=sys.stderr)
-    return subprocess.run(["wget", *args], check=False)
+    cmds = ["--quiet", "--timeout=5", *args]
+    print(f"  >> wget {' '.join(cmds)}", file=sys.stderr)
+    return subprocess.run(["wget", *cmds], check=False)
 
-def with_proxy(cmd):
+def with_proxy(cmd: list):
     """
     使用代理执行命令
     """
-    proxy = os.environ.get("PROXY")
-    https_proxy = os.environ.get("https_proxy")
-    if proxy and not https_proxy:
-        print(f"[proxy] execute using proxy: {proxy}")
+    PROXY = os.environ.get("PROXY",None)
+    https_proxy = os.environ.get("https_proxy",None)
+    if https_proxy:
+        print(f"[proxy] execute using environment: {https_proxy}")
+        return _wget(*cmd)
+    elif PROXY:
+        print(f"[proxy] execute using proxy: {PROXY}")
         env = os.environ.copy()
         for k in ["https_proxy", "http_proxy", "all_proxy", "HTTPS_PROXY", "HTTP_PROXY", "ALL_PROXY"]:
-            env[k] = proxy
-        return subprocess.run(cmd, env=env, check=False)
+            env[k] = PROXY
+        return _wget(*cmd, env=env)
     else:
-        print("[proxy] can not call with proxy: not set")
+        print("[proxy] execute with proxy: no proxy setting")
         return subprocess.CompletedProcess(cmd, 1)
 
-def without_proxy(cmd):
+def without_proxy(cmd: list):
     """
     不使用代理执行命令
     """
@@ -61,18 +70,8 @@ def without_proxy(cmd):
     env = os.environ.copy()
     for k in ["https_proxy", "http_proxy", "all_proxy", "HTTPS_PROXY", "HTTP_PROXY", "ALL_PROXY"]:
         env[k] = ""
-    return subprocess.run(cmd, env=env, check=False)
 
-def fix_base64_padding(encoded_file):
-    """
-    修正base64文件的填充
-    """
-    with open(encoded_file, "rb+") as f:
-        content = f.read()
-        mod = len(content) % 4
-        if mod != 0:
-            padding_num = 4 - mod
-            f.write(b"=" * padding_num)
+    return _wget(*cmd, env=env)
 
 def write_if_change(fname, data):
     """
@@ -116,6 +115,7 @@ with open(INPUT_FILE, "r") as f:
         line = line.strip()
         if not line or line.startswith("#"):
             continue
+            
         fname, url = line.split(" ", 1)
         fname = fname.strip()
         url = url.strip()
@@ -123,21 +123,22 @@ with open(INPUT_FILE, "r") as f:
         print(f"[{fname}] Downloading from: {url}")
 
         # 先尝试不使用代理
-        result = without_proxy(["wget", "--timeout=5", url, "-O", f"{fname}.downloading"])
+        result = without_proxy([url, "-O", f"{fname}.downloading"])
         if result.returncode == 0:
             print("complete without proxy")
         else:
+            print("failed without proxy")
             # 再尝试使用代理
-            result = with_proxy(["wget", "--timeout=5", url, "-O", f"{fname}.downloading"])
+            result = with_proxy([url, "-O", f"{fname}.downloading"])
             if result.returncode == 0:
                 print("complete with proxy")
             elif os.path.exists(f"{fname}.txt"):
                 print(f"[{fname}] Failed to download. use old one.")
                 continue
             else:
-                die(f"[{fname}] Failed to download.")
+                die(f"[{fname}] Error: failed to download, and no old one.")
 
-        fix_base64_padding(f"{fname}.downloading")
+        proxy.tools.fix_base64_padding(f"{fname}.downloading")
         try:
             with open(f"{fname}.downloading", "rb") as fdown:
                 raw = fdown.read()
@@ -164,3 +165,5 @@ if SOME_CHANGED or not os.path.exists("../subscription-updated"):
     print("[***] subscription updated")
     with open("../subscription-updated", "w") as f:
         f.write(datetime.now().strftime("%Y%m%d-%H%M%S"))
+else:
+    print("[***] subscription not changed")

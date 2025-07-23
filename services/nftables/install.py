@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from router.target import APP_DATA_DIR, systemd_add_unit, write_if_change
+from router.target import ROUTER_DATA_PATH, systemd_add_unit, write_if_change
 
 systemd_add_unit("nftables@.service")
 
@@ -12,5 +12,5 @@ write_if_change(
 """,
 )
 
-firewall_config_dir = APP_DATA_DIR / "firewall"
+firewall_config_dir = ROUTER_DATA_PATH / "firewall"
 firewall_config_dir.mkdir(parents=True, exist_ok=True)

@@ -3,7 +3,7 @@ from pathlib import Path
 
 import commentjson as json
 
-from router.target import APP_DATA_DIR, die, dump_json, proxy
+from router.target import ROUTER_DATA_PATH, die, dump_json, proxy
 
 if __name__ != "__main__":
     die("this is a script, not a library.")

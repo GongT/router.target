@@ -12,7 +12,7 @@ declare -i FORCE_TS=$(date +%s)
 FORCE_TS=$((FORCE_TS - 43200))
 
 if [[ ${DDNS_KEY+found} != found ]] || [[ ${DDNS_KEY+found} != found ]]; then
-	source "/data/AppData/router/ddns/config.sh"
+	source "${ROUTER_DATA_PATH}/ddns/config.sh"
 fi
 
 function pecho() {

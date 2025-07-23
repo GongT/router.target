@@ -25,5 +25,5 @@ PrivateTmp=yes
 
 StateDirectory=dnsdispatch
 ReadWritePaths=/var/lib/nftables/router/
-ReadWritePaths=${APP_DATA_DIR}/dns
+ReadWritePaths=${ROUTER_DATA_PATH}/dns
 InaccessiblePaths=-/etc

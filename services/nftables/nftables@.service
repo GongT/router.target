@@ -10,8 +10,9 @@ DefaultInstance=router
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/bin/bash "${__dirname}/scripts/start.sh" "%I"
+ExecReload=/usr/bin/bash "${__dirname}/scripts/start.sh" "%I"
 ExecStop=/usr/bin/bash "${__dirname}/scripts/stop.sh" "%I"
-Environment=EXTRA_CONFIG_PATH=${APP_DATA_DIR}/firewall
+Environment=EXTRA_CONFIG_PATH=${ROUTER_DATA_PATH}/firewall
 
 ConfigurationDirectory=nftables
 StateDirectory=nftables

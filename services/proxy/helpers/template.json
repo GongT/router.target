@@ -17,14 +17,14 @@
 				"type": "udp",
 				"tag": "dns.china",
 				"server": "::1",
-				"server_port": 5305,
+				"server_port": 5306,
 				"detour": "out.lo"
 			},
 			{
 				"type": "udp",
 				"tag": "dns.proxy",
 				"server": "::1",
-				"server_port": 5306,
+				"server_port": 5305,
 				"detour": "out.lo"
 			}
 		],
@@ -52,12 +52,25 @@
 			"tcp_fast_open": true,
 			"tcp_multi_path": true,
 			"udp_fragment": true
-		}
+		},
+		{
+			"type": "tproxy",
+			"tag": "in.transparent",
+			"listen": "::",
+			"listen_port": 3272,
+		},
+		{
+			"type": "redirect",
+			"tag": "in.redirect",
+			"listen": "::",
+			"listen_port": 3273,
+		},
 	],
 	"outbounds": [
 		{
 			"type": "direct",
 			"tag": "out.direct",
+			"routing_mark": 100,
 			"bind_interface": "ppp0",
 			"tcp_fast_open": true,
 			"udp_fragment": true,
@@ -65,16 +78,19 @@
 		{
 			"type": "direct",
 			"tag": "out.lan",
+			"routing_mark": 100,
 			"bind_interface": "br-lan",
 		},
 		{
 			"type": "direct",
 			"tag": "out.lo",
+			"routing_mark": 100,
 			"bind_interface": "lo",
 		},
 		{
 			"type": "direct",
 			"tag": "out.vpn",
+			"routing_mark": 100,
 			"bind_interface": "vpn",
 		},
 		{
@@ -189,7 +205,7 @@
 				"tag": "ruleset.manual",
 				"type": "local",
 				"format": "source",
-				"path": "${APP_DATA_DIR}/proxy/select_rule.json"
+				"path": "${ROUTER_DATA_PATH}/proxy/select_rule.json"
 			},
 			// {
 			// 	"tag": "ruleset.geoip-cn",

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import idna
 
-from router.target import APP_DATA_DIR, dump_json, proxy
+from router.target import ROUTER_DATA_PATH, dump_json, proxy
 
 
 def parse_domain_list(file: Path):
@@ -51,7 +51,7 @@ def create_ruleset_file(source: Path, output: Path, additinal_domains=[]):
 
 
 ####### DOMAINS
-DOMAINS_DIR = Path(APP_DATA_DIR).joinpath("dns/dispatch")
+DOMAINS_DIR = Path(ROUTER_DATA_PATH).joinpath("dns/dispatch")
 RULES_DIR = Path(proxy.STATE_DIR).joinpath("my-rules")
 
 RULES_DIR.mkdir(exist_ok=True)

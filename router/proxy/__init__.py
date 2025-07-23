@@ -1,9 +1,12 @@
+import base64
 from os import path
 from pathlib import Path
 
 import commentjson as json
 
+from .._internal.constants import ROUTER_DATA_PATH
 from ..target import DIST_ROOT, logger, read_filtered_file
+from . import tools
 from .config_tools.data_types import Outbound
 from .config_tools.env import STATE_DIR
 from .config_tools.subscription_url import parse_url
@@ -64,15 +67,27 @@ def block_by_tag(name: str) -> bool:
 def build_outbounds():
     groups: dict[str, list[Outbound]] = {}
 
-    subscriptions_folder = Path(STATE_DIR).joinpath("subscriptions")
+    subscription_files = []
+    subscription_files.extend(Path(STATE_DIR).glob("subscriptions/*.txt"))
+    subscription_files.extend(
+        ROUTER_DATA_PATH.glob("proxy/custom-subscriptions/*.txt")
+    )
 
-    for file in subscriptions_folder.glob("*.txt"):
+    for file in subscription_files:
         try:
             logger.print("processing: " + file.as_posix())
             provider = path.splitext(file.name)[0]
             outbounds = []
 
-            content = file.read_text()
+            content: str = file.read_text()
+
+            if ":" not in content and "\n" not in content.strip():
+                logger.dim("parsing file as base64 encoded")
+                try:
+                    content = base64.b64decode(content, validate=True).decode("utf-8")
+                except Exception:
+                    logger.warning("file is single line but not valid base64 encoded")
+                    continue
 
             for line in content.splitlines():
                 line = line.strip()
@@ -134,9 +149,9 @@ def load_config_template(file: Path | str):
         DIST_ROOT, "sing-box/webui"
     ).as_posix()
 
-    inputObs: list = config["outbounds"]
+    meta_outbounds: list = config["outbounds"]
     found = False
-    for ob in inputObs:
+    for ob in meta_outbounds:
         if (
             ob["tag"] == "out.select"
             or ob["tag"] == "out.manual"
@@ -150,7 +165,10 @@ def load_config_template(file: Path | str):
             f"no out.<select, manual, auto> in config file '{file}', nowhere to add outbounds"
         )
 
-    config["outbounds"] = inputObs + outbounds
+    for outbound in outbounds:
+        outbound["routing_mark"] = 100
+
+    config["outbounds"] = meta_outbounds + outbounds
 
     rules: list = config["dns"]["rules"]
     rules.insert(

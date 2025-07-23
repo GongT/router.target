@@ -8,5 +8,6 @@ from ._internal.fs import *
 from ._internal.git import *
 from ._internal.action_timestamp import *
 from ._internal.utils import *
+from ._internal import http_client
 from . import proxy
 from . import daemon

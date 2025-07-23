@@ -16,7 +16,7 @@ def read_filtered_file(src: str | Path) -> str:
     data = src.read_text()
 
     variables_map = {
-        "APP_DATA_DIR": constants.APP_DATA_DIR.as_posix(),
+        "ROUTER_DATA_PATH": constants.ROUTER_DATA_PATH.as_posix(),
         "__dirname": src.parent.as_posix(),
         "__filename": src.as_posix(),
         "ROOT_DIR": constants.ROOT_DIR.as_posix(),

@@ -5,5 +5,5 @@ cat /var/lib/dhcp/dhcp.leases
 
 echo "===================================="
 
-echo "/data/AppData/router/dhcp/static.conf:"
-cat /data/AppData/router/dhcp/static.conf
+echo "${ROUTER_DATA_PATH}/dhcp/static.conf:"
+cat ${ROUTER_DATA_PATH}/dhcp/static.conf

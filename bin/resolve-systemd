@@ -5,8 +5,8 @@ set -Eeu
 NS=$(cat /var/run/systemd/resolve/stub-resolv.conf | grep '^nameserver' | sed 's/nameserver //' | head -n1)
 
 if [[ ! $NS ]]; then
-	echo "no nameserver in stub-resolv.conf" >&2
-	exit 1
+	# echo "no nameserver in stub-resolv.conf" >&2
+	exec resolvectl query "$@"
 fi
 if [[ -t 0 ]]; then
 	set -x

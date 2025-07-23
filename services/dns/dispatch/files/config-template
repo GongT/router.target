@@ -5,15 +5,15 @@ china-dns tcp://::1#5306
 trust-dns tcp://::1#5305
 
 chnlist-file /var/lib/lists/chnlist.txt
-chnlist-file ${APP_DATA_DIR}/dns/dispatch/force.china.list
-chnlist-file ${APP_DATA_DIR}/dns/dispatch/force.china.list
+chnlist-file ${ROUTER_DATA_PATH}/dns/dispatch/force.china.list
+chnlist-file ${ROUTER_DATA_PATH}/dns/dispatch/force.china.list
 
 
 gfwlist-file /var/lib/lists/gfwlist.txt
-gfwlist-file ${APP_DATA_DIR}/dns/dispatch/force.oversea.list
+gfwlist-file ${ROUTER_DATA_PATH}/dns/dispatch/force.oversea.list
 
 group blacklist
-group-dnl ${APP_DATA_DIR}/dns/dispatch/blacklist.list
+group-dnl ${ROUTER_DATA_PATH}/dns/dispatch/blacklist.list
 group-upstream tcp://::1#8807
 
 add-tagchn-ip
@@ -26,11 +26,11 @@ timeout-sec 10
 cache 0
 
 verdict-cache 60000
-verdict-cache-db ${APP_DATA_DIR}/dns/dispatch/verdict-cache-db
+verdict-cache-db ${ROUTER_DATA_PATH}/dns/dispatch/verdict-cache-db
 
 hosts ${__dirname}/hosts
-hosts ${APP_DATA_DIR}/dns/dispatch/hosts
+hosts ${ROUTER_DATA_PATH}/dns/dispatch/hosts
 
 # verbose
 
-config ${APP_DATA_DIR}/dns/dispatch/config
+config ${ROUTER_DATA_PATH}/dns/dispatch/config

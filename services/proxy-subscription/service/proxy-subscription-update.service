@@ -7,7 +7,7 @@ Type=oneshot
 ExecStartPre=+/usr/bin/chown proxy:proxy /var/lib/proxy -R
 ExecStart=${PYTHON3} "${__dirname}/update-subscription.py"
 
-Environment="INPUT_FILE=${APP_DATA_DIR}/proxy/subscription.txt"
+Environment="INPUT_FILE=${ROUTER_DATA_PATH}/proxy/subscription.txt"
 WorkingDirectory=/var/lib/proxy
 
 Restart=no

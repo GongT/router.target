@@ -9,3 +9,7 @@ __pycache__
 /*.nft
 .outputs
 poetry.lock
+
+
+
+/cockpit-extension
