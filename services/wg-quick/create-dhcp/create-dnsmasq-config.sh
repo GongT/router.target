@@ -33,7 +33,7 @@ for LINE in "${LINES[@]}"; do
 	fi
 	echo "    IP='$IP', NAME='$NAME'"
 
-	DATA+="$IP $NAME"
+	DATA+="$IP"
 	for DOMAIN in "${FDOMAINS[@]}"; do
 		DATA+=" $NAME.$DOMAIN"
 	done

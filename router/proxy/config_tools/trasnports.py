@@ -9,7 +9,7 @@ from .subscription_url import AbsLinkObj
 from .data_types.vmess import VMessOutbound, V2RayTransport
 from .data_types.shadowsocks import ShadowSocksOutbound
 from .functions import dict_pop, is_dict_empty
-from ...target import die, logger, dump_json
+from ...target import logger, dump_json
 
 def create_transport_object(
     ln: AbsLinkObj,
@@ -29,7 +29,7 @@ def create_transport_object(
     elif protocol == "trojan":
         r = transport_make_trojan(ln)
     else:
-        die("程序错误: " + protocol)
+        logger.die("程序错误: " + protocol)
 
     ln.pop("remark", None)
     ln.pop("class_", None)

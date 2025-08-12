@@ -3,7 +3,7 @@ from pathlib import Path
 
 import commentjson as json
 
-from router.target import ROUTER_DATA_PATH, die, dump_json, logger, proxy
+from router.target import ROUTER_DATA_PATH, dump_json, logger, proxy
 
 logger.dim(f"ROUTER_DATA_PATH: {ROUTER_DATA_PATH}")
 

@@ -1,6 +1,6 @@
 from ._internal.config_file import *
 from ._internal.constants import *
-from ._internal.logger import *
+from ._internal import logger
 from ._internal.systemd import *
 from ._internal.subprocess import *
 from ._internal.install import *
@@ -11,3 +11,4 @@ from ._internal.utils import *
 from ._internal import http_client
 from . import proxy
 from . import daemon
+from . import tools

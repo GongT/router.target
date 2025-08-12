@@ -3,10 +3,10 @@ from pathlib import Path
 
 import commentjson as json
 
-from router.target import ROUTER_DATA_PATH, die, dump_json, proxy
+from router.target import logger, dump_json, proxy
 
 if __name__ != "__main__":
-    die("this is a script, not a library.")
+    logger.die("this is a script, not a library.")
 
 
 template = Path(__file__).parent.joinpath("template.json")
