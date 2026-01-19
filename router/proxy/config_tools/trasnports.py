@@ -13,7 +13,7 @@ from ...target import logger, dump_json
 
 def create_transport_object(
     ln: AbsLinkObj,
-) -> ShadowSocksOutbound | VMessOutbound | None:
+) -> ShadowSocksOutbound | VMessOutbound | TrojanOutbound | None:
     protocol = dict_pop(ln, "protocol")
     r = None
     if protocol == "ss":
@@ -127,7 +127,7 @@ def transport_make_trojan(link: AbsLinkObj) -> TrojanOutbound | None:
     )
     
     tls_insecure = link.pop("tls_insecure")
-    tls_server_name = link.pop("tls_server_name")
+    tls_server_name = link.pop("tls_server_name", "")
     udp = link.pop("udp")
     
     if tls_insecure or tls_server_name:

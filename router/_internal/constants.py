@@ -38,6 +38,9 @@ CACHE_ROOT = (
     Path(os.environ.get("SYSTEM_COMMON_CACHE", "/var/cache")) / "Download/router.target"
 )
 
+if not CACHE_ROOT.exists():
+    CACHE_ROOT.mkdir(parents=True, mode=0o755)
+
 _rp = os.environ.get("ROUTER_DATA_PATH", None)
 if not _rp:
     _ap = os.environ.get("APP_DATA_PATH", default=None)

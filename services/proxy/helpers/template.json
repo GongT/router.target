@@ -1,7 +1,7 @@
 {
 	"log": {
 		"disabled": false,
-		"level": "debug",
+		"level": "info",
 		"timestamp": false
 	},
 	"dns": {
@@ -243,7 +243,10 @@
 		"final": "out.global",
 		"auto_detect_interface": true,
 		"default_interface": "ppp0",
-		// "default_mark": 66
+		// "default_mark": 66,
+		"default_domain_resolver": {
+			"server": "dns.default",
+		},
 	},
 	"experimental": {
 		"cache_file": {

@@ -2,7 +2,7 @@
 
 set -Eeuo pipefail
 
-mapfile -t LINES < <(grep forward-port /etc/firewalld/policies/ipv4-NAT.xml | sed 's/^[[:space:]]*//g')
+mapfile -t LINES < <(grep -F '<forward-port ' /etc/firewalld/policies/ipv4-NAT.xml | sed 's/^[[:space:]]*//g')
 
 CHANGE=no
 

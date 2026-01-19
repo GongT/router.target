@@ -6,7 +6,7 @@ trust-dns tcp://::1#5305
 
 chnlist-file /var/lib/lists/chnlist.txt
 chnlist-file ${ROUTER_DATA_PATH}/dns/dispatch/force.china.list
-chnlist-file ${ROUTER_DATA_PATH}/dns/dispatch/force.china.list
+chnlist-file ${ROUTER_DATA_PATH}/dns/dispatch/force.china.autolist
 
 
 gfwlist-file /var/lib/lists/gfwlist.txt
@@ -31,6 +31,6 @@ verdict-cache-db ${ROUTER_DATA_PATH}/dns/dispatch/verdict-cache-db
 hosts ${__dirname}/hosts
 hosts ${ROUTER_DATA_PATH}/dns/dispatch/hosts
 
-# verbose
+verbose
 
 config ${ROUTER_DATA_PATH}/dns/dispatch/config

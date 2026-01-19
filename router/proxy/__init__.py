@@ -37,7 +37,11 @@ def process_line(provider: str, line: str):
     if block_by_tag(ln["title"]):
         return
 
-    ob = create_transport_object(ln)
+    try:
+        ob = create_transport_object(ln)
+    except Exception:
+        print("处理连接失败: " + line)
+        raise
     if not ob:
         return
 
@@ -69,9 +73,7 @@ def build_outbounds():
 
     subscription_files = []
     subscription_files.extend(Path(STATE_DIR).glob("subscriptions/*.txt"))
-    subscription_files.extend(
-        ROUTER_DATA_PATH.glob("proxy/custom-subscriptions/*.txt")
-    )
+    subscription_files.extend(ROUTER_DATA_PATH.glob("proxy/custom-subscriptions/*.txt"))
 
     for file in subscription_files:
         try:

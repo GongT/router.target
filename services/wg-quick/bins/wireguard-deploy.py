@@ -36,6 +36,11 @@ parser.add_argument(
     default=confs[0] if len(confs) == 1 else None,
 )
 parser.add_argument(
+    "--name",
+    help='remote interface name, eg: "wg0", defaults to the same as --vpn',
+    default=None,
+)
+parser.add_argument(
     "--hostname", required=True, help="target machine's virtual hostname"
 )
 parser.add_argument(
@@ -49,6 +54,11 @@ parser.add_argument(
     nargs="*",
     metavar="-- REMOTE",
 )
+parser.add_argument(
+    "--sudo",
+    help="force use sudo to run remote commands",
+    action="store_true",
+)
 
 parser.usage = re.sub(r"^usage: ", "", parser.format_help(), count=1)
 
@@ -56,6 +66,8 @@ args = parser.parse_args()
 
 hostname: str = args.hostname
 vpn: str = args.vpn
+vpn_ifname: str = args.name or vpn
+force_sudo: bool = args.sudo
 
 if not re.fullmatch(r"^[a-zA-Z0-9._-]+$", hostname):
     die(f"Invalid hostname format: {hostname}")
@@ -199,52 +211,58 @@ def get_my_information():
 
 def make_server_script(ip_str: str, prikey: str, my: Info):
     dns = my["private_address"]
+    dns_scripts = []
+    dns_scripts.append(f"PostUp = resolvectl dns %i {my['private_address']}")
     if my["domain_suffix"]:
         dns = f"{dns},{my['domain_suffix']}"
+        dns_scripts.append(f"PostUp = resolvectl domain %i {my['domain_suffix']}")
+    dns_scripts.append(f"PostUp = resolvectl default-route %i false")
+    dns_scripts.append(f"# DNS = {dns}")
+
     script = f"""#!/usr/bin/bash
 
 set -Eeuo pipefail
 
 is_apt() {{
-    command -v apt &>/dev/null
+	command -v apt &>/dev/null
 }}
 is_dnf() {{
-    command -v dnf &>/dev/null
+	command -v dnf &>/dev/null
 }}
 
 if ! command -v wg-quick &>/dev/null; then
-    echo "installing wg-quick..."
-    if is_apt; then
-        apt install -y wireguard-tools
-    elif is_dnf; then
-        dnf install -y wireguard-tools
-    else
-        echo "unsupported package manager"
-        exit 1
-    fi
+	echo "installing wg-quick..."
+	if is_apt; then
+		apt install -y wireguard-tools
+	elif is_dnf; then
+		dnf install -y wireguard-tools
+	else
+		echo "unsupported package manager"
+		exit 1
+	fi
 fi
 
 mkdir -p /etc/wireguard
-cat <<-EOF > "/etc/wireguard/{vpn}.conf"
-    [Interface]
-    Address = {ip_str}/32
-    PrivateKey = {prikey}
-    DNS = {dns}
-    ListenPort = 45148
-
-    [Peer]
-    PublicKey = {my['public_key']}
-    AllowedIPs = {my['private_address']}
-    Endpoint = {my['public_access']}
-    PersistentKeepalive = 15
+cat <<-EOF > "/etc/wireguard/{vpn_ifname}.conf"
+	[Interface]
+	Address = {ip_str}/32
+	PrivateKey = {prikey}
+	{"\n".join(dns_scripts)}
+	ListenPort = 45148
+	
+	[Peer]
+	PublicKey = {my['public_key']}
+	AllowedIPs = {my['private_address']}
+	Endpoint = {my['public_access']}
+	PersistentKeepalive = 15
 EOF
 
-systemctl enable "wg-quick@{vpn}.service"
-systemctl restart --no-block "wg-quick@{vpn}.service"
+systemctl enable "wg-quick@{vpn_ifname}.service"
+systemctl restart --no-block "wg-quick@{vpn_ifname}.service"
 sleep 2
-systemctl status "wg-quick@{vpn}.service"
+systemctl status "wg-quick@{vpn_ifname}.service"
 
-echo "service is: $(systemctl is-active "wg-quick@{vpn}.service")"
+echo "service is: $(systemctl is-active "wg-quick@{vpn_ifname}.service")"
 """
 
     return script
@@ -283,12 +301,13 @@ def wait_ack(p: subprocess.Popen):
     stdout: TextIO = p.stdout  # type: ignore
     while True:
         line = stdout.readline().rstrip()
-        logger.dim(f"\x1b[48;5;8m \x1b[49m {line}")
 
         if rand_str in line:
             signal.set()
             th.join()
             return
+
+        logger.dim(f"\x1b[48;5;8m \x1b[49m {line}")
 
         if p.poll() is not None:
             logger.die("thread unexpected died")
@@ -305,18 +324,18 @@ def execute(p: subprocess.Popen, script: str):
     stdin: TextIO = p.stdin  # type: ignore
     stdout: TextIO = p.stdout  # type: ignore
 
-    # logger.dim("execute:", script)
+    # logger.dim(f"\x1b[48;5;8m \x1b[49m+ execute: {script}")
     stdin.write(f"\n{script}\n{printf_cmd}")
     stdin.flush()
 
     readed = ""
     while True:
         line = stdout.readline().rstrip()
-        logger.dim(f"\x1b[48;5;8m \x1b[49m {line}")
 
         if rand_str in line:
             return readed
 
+        logger.dim(f"\x1b[48;5;8m \x1b[49m {line}")
         readed = line + "\n"
 
         if p.poll() is not None:
@@ -325,7 +344,7 @@ def execute(p: subprocess.Popen, script: str):
 
 def execute_remote_script(script: str):
     # cmds = ["bash","-c","echo 123123"]
-    cmds = ["ssh", "-T", *args.remote, "/bin/bash", "--norc", "--noprofile"]
+    cmds = ["ssh", *args.remote, "/bin/bash", "--norc", "--noprofile"]
     debug("executing remote script:", cmds)
     p = subprocess.Popen(
         cmds,
@@ -340,9 +359,12 @@ def execute_remote_script(script: str):
     wait_ack(p)
     logger.success("remote shell start working.")
 
-    id = execute(p, "id -u")
     try:
-        id = int(id)
+        if force_sudo:
+            id = -1
+        else:
+            id = execute(p, "/usr/bin/id -u")
+            id = int(id)
         if id != 0:
             logger.dim(f"user {id} is not root, switching...")
             p.stdin.write(f"sudo bash --norc --noprofile\n{printf_cmd}")
@@ -352,12 +374,12 @@ def execute_remote_script(script: str):
                 logger.die("failed to switch to root")
             else:
                 logger.info("success switch user to root")
-    except:
-        logger.die("failed to detect user id")
+    except Exception as e:
+        logger.die(f"failed to detect user id: {e}")
 
     output = execute(p, script)
 
-    if "service is: acti" in output:
+    if "service is:" in output:
         logger.success("service install success", "(not sure execute ok)")
     else:
         logger.error("can not install service on remote machine")
