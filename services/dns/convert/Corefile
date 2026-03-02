@@ -51,9 +51,3 @@
 		except .arpa .local .internal .sbvpn 
 	}
 }
-
-
-# vpn
-#.:5306 {
-#	wgsd sbvpn. vpn
-#}

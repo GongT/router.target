@@ -22,6 +22,7 @@ from router.target import (
     set_working_directory,
     systemd_add_unit,
     write_if_change,
+    install_file,
 )
 
 set_working_directory(ROOT_DIR)
@@ -74,8 +75,10 @@ ts.update()
 env_dir = execute_output("poetry", "env", "info", "--path")
 set_pyenv(env_dir)
 
-for file in ROOT_DIR.joinpath("assets").glob("*"):
+for file in ROOT_DIR.joinpath("assets/base-services").glob("*"):
     systemd_add_unit(file.as_posix())
+
+install_file(ROOT_DIR.joinpath("assets/journald@noisy.conf"), Path("/etc/systemd"))
 
 for subabs in ROOT_DIR.joinpath("services").iterdir():
     logger.dim(f"> {subabs.relative_to(ROOT_DIR)}")

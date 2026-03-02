@@ -22,5 +22,10 @@ defaultroute
 ipv6cp-accept-local
 ipv6cp-accept-remote
 defaultroute6
-# usepeerdns
+usepeerwins
+usepeerdns
+noresolvconf
 # plugin winbind.so
+show-password
+nodetach
+up_sdnotify

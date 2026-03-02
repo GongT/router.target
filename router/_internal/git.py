@@ -42,7 +42,7 @@ def git_clone_or_pull(repo_url: str, branch="", alter_name: str | Path | None = 
         if branch:
             execute_mute("git", "checkout", branch, cwd=save_path)
 
-        execute_passthru("git", "pull", cwd=save_path)
+        execute_passthru("git", "pull", cwd=save_path, ignore=True)
     else:
         # If the directory does not exist, clone the repository
         branch = ["--branch", branch] if branch else []

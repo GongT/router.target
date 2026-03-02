@@ -3,5 +3,5 @@ After=systemd-networkd.service
 
 [Service]
 Environment=IF_NAME=%i
-ExecStartPost=/bin/bash "${__dirname}/create-dnsmasq-config.sh"
+ExecStartPost=${PYTHON3} "${__dirname}/create-dnsmasq-config.py" %i
 StateDirectory=wireguard

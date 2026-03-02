@@ -7,7 +7,13 @@ Wants=nss-lookup.target
 WantedBy=router.target
 
 [Service]
-ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf --hostsdir $STATE_DIRECTORY
+ExecStartPre=/usr/bin/mkdir -p "${STATE_DIRECTORY}/hosts"
+ExecStart=/usr/sbin/dnsmasq -k \
+	"--conf-dir=${ROUTER_DATA_PATH}/dns/wireguard,*.conf" \
+	"--addn-hosts=${ROUTER_DATA_PATH}/dns/wireguard/hosts" \
+	"--conf-file=${__dirname}/config.conf" \
+	"--conf-script='${PYTHON3}' '${__dirname}/create-tlds-config.py'" \
+	"--hostsdir=${STATE_DIRECTORY}/hosts"
 Type=exec
 
 RestartSec=5s
@@ -20,7 +26,4 @@ ProtectControlGroups=yes
 ProtectHome=yes
 StateDirectory=wireguard
 
-InaccessiblePaths=-/data
 InaccessiblePaths=-/etc/dnsmasq.conf
-BindPaths=${__dirname}/config:/etc/dnsmasq.d
-BindPaths=${ROUTER_DATA_PATH}/dns/wireguard:/etc/dnsmasq.d/dynamic

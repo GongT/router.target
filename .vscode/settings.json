@@ -19,5 +19,5 @@
 	// "python-envs.defaultPackageManager": "ms-python.python:poetry",
 	"python.poetryPath": "poetry",
 	"python.useEnvironmentsExtension": false,
-    "python.defaultInterpreterPath": "/usr/local/libexec/router/router-8kIdDUSQ-py3.13/bin/python",
+    "python.defaultInterpreterPath": "/usr/local/libexec/router/router-8kIdDUSQ-py3.14/bin/python",
 }

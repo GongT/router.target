@@ -21,6 +21,7 @@ def read_filtered_file(src: str | Path) -> str:
         "__filename": src.as_posix(),
         "ROOT_DIR": constants.ROOT_DIR.as_posix(),
         "DIST_ROOT": constants.DIST_ROOT.as_posix(),
+        "LIBEXEC_ROOT": constants.LIBEXEC_ROOT.as_posix(),
         "PWD": constants.relative_dir.as_posix(),
         "RUNTIME_ENVFILE": constants.RUNTIME_ENVFILE.as_posix(),
         "VIRTUAL_ENV": constants.PYENV.as_posix(),
@@ -40,7 +41,7 @@ def write_if_change(filepath: Path, data: str) -> bool:
     output_paths.append(pathstr)
 
     if filepath.exists():
-        if filepath.read_text() == data:
+        if filepath.stat().st_size == len(data) and filepath.read_text() == data:
             return False
     else:
         filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -85,6 +86,12 @@ def remove_unknown_files(basedir: Path) -> list[Path]:
             logger.dim(f"  * unlink {file}")
     return removed
 
+
+def install_file(src: Path, dst: Path):
+    if dst.is_dir():
+        dst = dst / src.name
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    write_if_change(dst, src.read_text())
 
 def install_directory(src: Path, dst: Path):
     """

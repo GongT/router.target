@@ -10,7 +10,7 @@ def tlds():
         logger.dim("Downloading TLD list...")
         download_file(SRC_URL, cache_file)
 
-    r = []
+    r: list[str] = []
     for line in cache_file.read_text("utf8").splitlines():
         line = line.strip()
         if not line or line.startswith("#"):

@@ -138,7 +138,12 @@ def cleanup_and_enable_services():
     logger.info(f"enable {len(registed_systemd_units)} units...")
     execute_passthru("systemctl", "enable", *registed_systemd_units)
     services_list_file = ROUTER_DATA_PATH.joinpath("services_list.txt")
-    write_if_change(services_list_file, "\n".join(registed_systemd_units) + "\n")
+    write_if_change(services_list_file, "\n".join(filter_normal(registed_systemd_units)) + "\n")
+
+def filter_normal(names: list[str]):
+    return [
+        name for name in names if "@." not in name
+    ]
 
 
 def simulate_systemd_enable_one(unit_name: str):

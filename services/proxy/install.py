@@ -11,8 +11,8 @@ from router.target import (
     systemd_add_unit,
 )
 
-g = github_api()
-print(g.get_repo("MetaCubeX/Yacd-meta").get_releases().get_page(0)[0].zipball_url)
+# g = github_api()
+# print(g.get_repo("MetaCubeX/Yacd-meta").get_releases().get_page(0)[0].zipball_url)
 
 # 安装sing-box
 distBin = DIST_ROOT / "sing-box/sing-box"

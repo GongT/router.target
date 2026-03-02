@@ -2,6 +2,9 @@
 
 set -Eeuo pipefail
 
+systemd-notify --status="starting..."
+
+logger --tag 'pppoe:main' 'remove old device if found'
 ip link del ppp0 || true
 
 cp -fr /run/config/lower/. /etc/ppp
@@ -28,14 +31,17 @@ AUTH="\"$username\" * \"$password\""
 echo "$AUTH" >/etc/ppp/chap-secrets
 echo "$AUTH" >/etc/ppp/pap-secrets
 
+mkdir -p /etc/ppp/peers
 cat <<-EOF >/etc/ppp/peers/isp
 	nic-wan
 	ifname ppp0
 	user "$username"
 	password "$password"
+	set NOTIFY_SOCKET=$NOTIFY_SOCKET
 EOF
 
-logger </etc/ppp/options
-logger </etc/ppp/peers/isp
+logger --tag 'pppoe:main' </etc/ppp/options
+logger --tag 'pppoe:main' </etc/ppp/peers/isp
 
+systemd-notify --status="connecting..."
 exec /usr/sbin/pppd call isp
