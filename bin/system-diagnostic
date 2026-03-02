@@ -52,50 +52,21 @@ if [[ ${MEM_PERCENT%.*} -lt 20 ]]; then
 fi
 
 header "服务"
-SEV_NAMES=(
-	systemd-networkd.service
-	systemd-resolved.service
-	pppoe.service
-	dhcp.service
-	dnsdispatch.service
-	dnsconvert.service
-	dnsproxy.service
-	ddns.timer
-	list-download.timer
-	tlds-download.timer
-	acme-renew.timer
-	proxy-subscription-update.timer
-	proxy.service
-	wireguard-dns.service
-	ipchange-monitor.service
-)
-SEV_NAMES_MUTE=(
-	firewalld.service
-	natloopback.path
-	clash-subscription-processor.service
-	ipsets-generate.service
-	miniupnpd.service
-)
-declare -i ERR=0
-for I in "${SEV_NAMES[@]}"; do
+mapfile -t SERVICE_LIST < <(cat "${ROUTER_DATA_PATH}/services_list.txt")
+
+declare ERR=()
+for I in "${SERVICE_LIST[@]}"; do
 	if  systemctl is-active -q "$I"; then
 		echo -n "$(success "$I ")"
 	else
 		echo -n "$(error "$I ")"
-		ERR+=1
-	fi
-done
-for I in "${SEV_NAMES_MUTE[@]}"; do
-	if systemctl is-active -q "$I"; then
-		:
-	else
-		echo -n "$(error "$I ")"
-		ERR+=1
+		ERR+=("$I")
 	fi
 done
 echo ""
-if [[ $ERR -gt 0 ]]; then
-	echo "$ERR 个服务不正常"
+if [[ ${#ERR[@]} -gt 0 ]]; then
+	echo "${#ERR[@]} 个服务不正常"
+	systemctl start --no-block "${ERR[@]}" &>/dev/null
 fi
 
 header "网络接口"

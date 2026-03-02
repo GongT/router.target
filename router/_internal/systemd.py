@@ -3,18 +3,14 @@ from pathlib import Path
 
 from . import constants, logger
 from .config_file import KeyValueConfig
-from .constants import UNIT_ROOT, get_working_path
+from .constants import ROUTER_DATA_PATH, UNIT_ROOT, get_working_path
 from .fs import (
     ensure_symlink,
     read_filtered_file,
     remove_unknown_files,
     write_if_change,
 )
-from .subprocess import (
-    execute_mute,
-    execute_output_error,
-    execute_passthru,
-)
+from .subprocess import execute_mute, execute_output_error, execute_passthru
 
 registed_systemd_units: list[str] = []
 
@@ -43,7 +39,7 @@ def filter_unit_file(src: Path) -> str:
         if not service_is_last_section(data):
             logger.die(f"文件 {src} 的[Service]没有放在最后一节")
         data += f"""
-Slice=router.target
+Slice=router.slice
 EnvironmentFile={constants.RUNTIME_ENVFILE.as_posix()}
 """
 
@@ -141,6 +137,8 @@ def cleanup_and_enable_services():
 
     logger.info(f"enable {len(registed_systemd_units)} units...")
     execute_passthru("systemctl", "enable", *registed_systemd_units)
+    services_list_file = ROUTER_DATA_PATH.joinpath("services_list.txt")
+    write_if_change(services_list_file, "\n".join(registed_systemd_units) + "\n")
 
 
 def simulate_systemd_enable_one(unit_name: str):

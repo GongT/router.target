@@ -10,6 +10,7 @@ WantedBy=router.target
 Type=forking
 GuessMainPID=yes
 ExecStartPre=-/usr/bin/mkdir -p ${ROUTER_DATA_PATH}/pppoe
+ExecStartPre=/usr/lib/systemd/systemd-networkd-wait-online --interface=wan
 ExecStart=${__dirname}/pppoe.sh
 TimeoutStartSec=10s
 KillSignal=SIGHUP

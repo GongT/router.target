@@ -15,7 +15,9 @@
 		".config"
 	],
 	"remote.autoForwardPorts": false,
-	"python-envs.defaultEnvManager": "ms-python.python:poetry",
+	// "python-envs.defaultEnvManager": "ms-python.python:system",
 	// "python-envs.defaultPackageManager": "ms-python.python:poetry",
-	"python.poetryPath": "poetry"
+	"python.poetryPath": "poetry",
+	"python.useEnvironmentsExtension": false,
+    "python.defaultInterpreterPath": "/usr/local/libexec/router/router-8kIdDUSQ-py3.13/bin/python",
 }

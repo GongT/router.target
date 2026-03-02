@@ -1,6 +1,3 @@
-##### ROUTER GENERATED
-## source=/data/DevelopmentRoot/github.com/gongt/router.target/assets/dev-shm-sockets.mount
-
 [Unit]
 Before=router.target services.target 
 
@@ -10,4 +7,3 @@ Type=tmpfs
 
 [Install]
 WantedBy=local-fs.target
-

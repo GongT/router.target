@@ -24,9 +24,17 @@ def copy_script_file(file: Path):
     if file.suffix != ".sh":
         logger.die(f"install_script_file: {file} is not a shell script")
 
-    data = read_filtered_file(file)
-    dest = constants.BINARY_DIR / file.stem
+    src_file = file
+    
+    content = read_filtered_file(file)
+    dest_file = constants.BINARY_DIR / file.stem
+    
+    ch = write_if_change(dest_file, "\n".join(content))
+    chmod(dest_file, 0o755)
 
+    logger.dim(
+        f"  * install binary: {dest_file.as_posix()} -> {src_file.relative_to(constants.ROOT_DIR)}{'' if ch else ' (unchanged)'}"
+    )
 
 def install_python_binary(dest_name: str, source_file: str | Path | None):
     if source_file is None:

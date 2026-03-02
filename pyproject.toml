@@ -11,6 +11,7 @@ package-mode = true
 python = "^3.13"
 python-dotenv = "^1.1.0"
 commentjson = "^0.9.0"
+dotenv = "^0.9.9"
 
 [tool.poetry.group.dev.dependencies]
 PyGithub = "^2.6.1"
