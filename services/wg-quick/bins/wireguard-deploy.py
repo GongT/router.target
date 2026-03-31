@@ -50,8 +50,8 @@ parser.add_argument(
 )
 parser.add_argument(
     "remote",
-    help="ssh server argument, eg: root@1.2.3.4 -p 2222",
-    nargs="*",
+    help="ssh server and its arguments, eg: root@1.2.3.4 -p 2222",
+    nargs="+",
     metavar="-- REMOTE",
 )
 parser.add_argument(
@@ -124,7 +124,13 @@ def alloc_ip(input: str = args.ip):
 
 def find_exists_hostname(hostname: str = hostname):
     for item in config.peers():
+        host = item.get("# Hostname")
         ip = item.get("AllowedIPs")
+
+        if host == hostname:
+            debug("found exists config section for this hostname:", host)
+            return item
+
         if not ip:
             continue
 
@@ -165,6 +171,7 @@ def make_keypair():
 
 
 class Info(TypedDict):
+    display_name: str | None
     public_access: str
     public_key: str
     private_address: str
@@ -202,6 +209,7 @@ def get_my_information():
         die(f"missing PrivateKey field in [Interface]")
 
     return Info(
+        display_name="The Router",
         public_access=get_public_addr(),
         public_key=genpubkey(my_prikey),
         private_address=str(ip),
@@ -209,7 +217,30 @@ def get_my_information():
     )
 
 
-def make_server_script(ip_str: str, prikey: str, my: Info):
+def get_peers_with_endpoint():
+    peers: list[Info] = []
+    for item in config.peers():
+        public_access = item.get("Endpoint") or item.get("# Endpoint")
+        public_key = item.get("PublicKey")
+        private_address = item.get("AllowedIPs")
+        domain_suffix = None
+
+        if public_access and public_key and private_address:
+            peers.append(
+                Info(
+                    display_name=item.get("# Hostname"),
+                    public_access=public_access,
+                    public_key=public_key,
+                    private_address=private_address,
+                    domain_suffix=domain_suffix,
+                )
+            )
+
+    return peers
+
+
+def make_server_script(ip_str: str, keypair: tuple[str, str], my, *known_peers: Info):
+    pubkey, prikey = keypair
     dns = my["private_address"]
     dns_scripts = []
     dns_scripts.append(f"PostUp = resolvectl dns %i {my['private_address']}")
@@ -247,14 +278,12 @@ cat <<-EOF > "/etc/wireguard/{vpn_ifname}.conf"
 	[Interface]
 	Address = {ip_str}/32
 	PrivateKey = {prikey}
-	{"\n".join(dns_scripts)}
+	# PublicKey = {pubkey}
+	{"\n\t".join(dns_scripts)}
 	ListenPort = 45148
 	
-	[Peer]
-	PublicKey = {my['public_key']}
-	AllowedIPs = {my['private_address']}
-	Endpoint = {my['public_access']}
-	PersistentKeepalive = 15
+	{format_peer(my, optional=False)}
+	{'\t'.join([format_peer(peer, skip_peer=pubkey) for peer in known_peers])}
 EOF
 
 systemctl enable "wg-quick@{vpn_ifname}.service"
@@ -268,7 +297,27 @@ echo "service is: $(systemctl is-active "wg-quick@{vpn_ifname}.service")"
     return script
 
 
+def format_peer(item: Info, skip_peer: str | None = None, optional=True):
+    if skip_peer and item["public_key"] == skip_peer:
+        return ""
+    config_sect = f"""[Peer]
+	PublicKey = {item['public_key']}
+	AllowedIPs = {item['private_address']}
+	{'# ' if optional else ''}Endpoint = {item['public_access']}
+	PersistentKeepalive = 15
+"""
+    if item["display_name"]:
+        config_sect = f"# {item['display_name']}\n\t{config_sect}"
+    return config_sect
+
+
+vpn_domain: str | None = None
+
+
 def get_vpn_domain():
+    global vpn_domain
+    if vpn_domain is not None:
+        return vpn_domain
     jsonTxt = subprocess.run(
         ["networkctl", "status", "--json=short", vpn],
         stdout=subprocess.PIPE,
@@ -282,6 +331,7 @@ def get_vpn_domain():
         first = domains.get("Domain")
         if first:
             debug("found vpn domain:", first)
+            vpn_domain = first
             return first
 
     return None
@@ -315,8 +365,11 @@ def wait_ack(p: subprocess.Popen):
 
 def _wait_ack_main(stdin: TextIO, signal: threading.Event):
     while signal.is_set() is False:
-        stdin.write(printf_cmd)
-        stdin.flush()
+        try:
+            stdin.write(printf_cmd)
+            stdin.flush()
+        except:
+            break
         time.sleep(1)
 
 
@@ -408,6 +461,8 @@ def main():
         pubkey = exists.get(name="PublicKey")
         if not prikey or not pubkey:
             prikey, pubkey = make_keypair()
+            exists.set("# private", prikey)
+            exists.set("PublicKey", pubkey)
         else:
             debug("using exists pubkey:", pubkey)
     else:
@@ -424,8 +479,16 @@ def main():
         logger.dim("  * unchanged")
 
     info = get_my_information()
-    script = make_server_script(ip_str, prikey, info)
-    execute_remote_script(script)
+    public_peers = get_peers_with_endpoint()
+    script = make_server_script(ip_str, (pubkey, prikey), info, *public_peers)
+
+    try:
+        execute_remote_script(script)
+    except:
+        debug("the script is: ==============================")
+        debug(script)
+        debug("=============================================")
+        raise
 
 
 if __name__ != "__main__":
