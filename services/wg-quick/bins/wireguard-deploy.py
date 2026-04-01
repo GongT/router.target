@@ -101,7 +101,7 @@ def alloc_ip(input: str = args.ip):
         if not ip:
             continue
 
-        ip_addr_match = re.search(r"^[^/#\s]+", ip)
+        ip_addr_match = re.search(r"^[^/#\s,]+", ip)
         if not ip_addr_match:
             continue
 
