@@ -3,7 +3,7 @@ from pathlib import Path
 
 import commentjson as json
 
-from router.target import logger, dump_json, proxy
+from router.target import dump_json, logger, proxy, write_file_if_changed
 
 if __name__ != "__main__":
     logger.die("this is a script, not a library.")
@@ -44,6 +44,4 @@ config["inbounds"] = inbounds
 
 
 output_file = Path(proxy.STATE_DIR) / "dnsproxy.json"
-print(f"write to file: {output_file}")
-with open(output_file, "wt") as f:
-    f.write(dump_json(config))
+write_file_if_changed(output_file, dump_json(config))

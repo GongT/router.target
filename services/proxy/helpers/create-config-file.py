@@ -3,7 +3,13 @@ from pathlib import Path
 
 import commentjson as json
 
-from router.target import ROUTER_DATA_PATH, dump_json, logger, proxy
+from router.target import (
+    ROUTER_DATA_PATH,
+    dump_json,
+    logger,
+    proxy,
+    write_file_if_changed,
+)
 
 logger.dim(f"ROUTER_DATA_PATH: {ROUTER_DATA_PATH}")
 
@@ -17,6 +23,4 @@ if custom.exists():
     proxy.merge_object(config, custom_config)
 
 output_file = Path(proxy.STATE_DIR).joinpath("subscription.json")
-print(f"write to file: {output_file}")
-with open(output_file, "wt") as f:
-    f.write(dump_json(config))
+write_file_if_changed(output_file, dump_json(config))

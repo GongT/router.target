@@ -18,7 +18,7 @@
 		"final": "dns.china",
 		"strategy": "prefer_ipv6",
 		"disable_cache": false,
-		"disable_expire": true,
+		"disable_expire": false,
 		"independent_cache": false,
 		"cache_capacity": 200,
 		"reverse_mapping": false,

@@ -6,11 +6,11 @@ import commentjson as json
 
 from .._internal.constants import ROUTER_DATA_PATH
 from ..target import DIST_ROOT, logger, read_filtered_file
-from . import tools
-from .config_tools.data_types import Outbound
+from .config_tools import parse_url
+from .config_tools.data_types.outbound import Outbound
 from .config_tools.env import STATE_DIR
-from .config_tools.subscription_url import parse_url
-from .config_tools.trasnports import create_transport_object
+
+__all__ = ["load_config_template", "build_outbounds"]
 
 
 def merge_object(a: dict, b: dict, _dpath=""):
@@ -32,20 +32,16 @@ def merge_object(a: dict, b: dict, _dpath=""):
 def process_line(provider: str, line: str):
     ln = parse_url(line)
     if ln is None:
+        logger.warning(f"不支持此类型的节点: {line}")
         return
 
-    if block_by_tag(ln["title"]):
+    if block_by_tag(ln.tag):
+        logger.dim(f"[{provider}] 根据名称忽略: {line}")
         return
 
-    try:
-        ob = create_transport_object(ln)
-    except Exception:
-        print("处理连接失败: " + line)
-        raise
-    if not ob:
-        return
+    logger.dim(f"[{provider}] 成功解析节点: {line}")
 
-    return ob
+    return ln
 
 
 def block_by_tag(name: str) -> bool:
@@ -77,7 +73,7 @@ def build_outbounds():
 
     for file in subscription_files:
         try:
-            logger.print("processing: " + file.as_posix())
+            logger.print("处理文件: " + file.as_posix())
             provider = path.splitext(file.name)[0]
             outbounds = []
 
@@ -88,7 +84,7 @@ def build_outbounds():
                 try:
                     content = base64.b64decode(content, validate=True).decode("utf-8")
                 except Exception:
-                    logger.warning("file is single line but not valid base64 encoded")
+                    logger.warning("文件是单行但不是有效的 base64 编码")
                     continue
 
             for line in content.splitlines():
@@ -102,17 +98,19 @@ def build_outbounds():
 
             groups[provider] = outbounds
 
+            logger.print(f"[完成] 文件: {file.as_posix()} ({len(outbounds)} 个节点)\n")
+
         except:
-            logger.warning("FILE: " + file.as_posix())
+            logger.warning("处理错误！文件: " + file.as_posix())
             raise
 
     if len(groups) == 0:
-        logger.die("no outbound exists!!")
+        logger.die("没有可用的出站连接!!")
 
     if len(groups) > 1:
         for provider, outbounds in groups.items():
             for outbound in outbounds:
-                outbound["tag"] = f"[{provider}] {outbound['tag']}"
+                outbound.set_category(provider)
 
     return groups
 
@@ -120,15 +118,18 @@ def build_outbounds():
 def outbounds_names(outbounds: list[Outbound]) -> list[str]:
     outboundTitles = []
     for ob in outbounds:
-        outboundTitles.append(ob["tag"])
+        outboundTitles.append(ob.tag)
+    outboundTitles.sort()
     return outboundTitles
 
 
 def outbounds_domains(outbounds: list[Outbound]) -> list[str]:
     used_domains = set()
     for ob in outbounds:
-        used_domains.add(ob["server"])
-    return list(used_domains)
+        used_domains.add(*ob.domains)
+    result = list(used_domains)
+    result.sort()
+    return result
 
 
 def load_config_template(file: Path | str):
@@ -167,16 +168,21 @@ def load_config_template(file: Path | str):
             f"no out.<select, manual, auto> in config file '{file}', nowhere to add outbounds"
         )
 
+    outbound_dicts: list[dict] = []
     for outbound in outbounds:
-        outbound["routing_mark"] = 100
+        obj = outbound.to_json()
+        obj["routing_mark"] = 100
+        # obj["$url"] = outbound.url
+        outbound_dicts.append(obj)
 
-    config["outbounds"] = meta_outbounds + outbounds
+    config["outbounds"] = meta_outbounds + outbound_dicts
 
     rules: list = config["dns"]["rules"]
     rules.insert(
         0,
         {
             "domain": used_domains,
+            "action": "route",
             "server": "dns.china",
         },
     )

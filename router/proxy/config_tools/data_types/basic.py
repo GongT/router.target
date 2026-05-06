@@ -79,5 +79,43 @@ class UDPOverTCP(TypedDict, total=False):
     enabled: bool
     version: int
 
-class BaseOutbound(TypedDict, total=False):
-    pass
+
+type HeadersMap = dict[str, str]
+
+
+class V2RayTransportFields(TypedDict, total=False):
+    # https://sing-box.sagernet.org/zh/configuration/shared/v2ray-transport/
+    type: str
+
+    host: list[str] | str
+
+    # HTTP
+    # type: "http",
+    # host: list[str]
+    path: str
+    method: str
+    headers: HeadersMap
+    idle_timeout: str
+    ping_timeout: str
+
+    # WebSocket
+    # type: "ws",
+    path: str
+    headers: HeadersMap
+    max_early_data: int
+    early_data_header_name: str
+
+    # QUIC
+
+    # gRPC
+    # type: "grpc",
+    service_name: str
+    idle_timeout: str
+    ping_timeout: str
+    permit_without_stream: bool
+
+    # HTTPUpgrade
+    # type: "httpupgrade"
+    # host: str
+    path: str
+    headers: HeadersMap

@@ -9,7 +9,7 @@ WantedBy=router.target
 
 [Service]
 Type=exec
-ExecStartPre=+/usr/bin/rm -f "subscription.json"
+# ExecStartPre=+/usr/bin/rm -f "subscription.json"
 ExecStartPre=+${PYTHON3} "${__dirname}/helpers/convert-user-lists.py"
 ExecStartPre=+${PYTHON3} "${__dirname}/helpers/create-config-file.py"
 ExecStart=${DIST_ROOT}/sing-box/sing-box --disable-color --directory "${STATE_DIRECTORY}" --config "subscription.json" run

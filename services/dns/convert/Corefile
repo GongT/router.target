@@ -43,7 +43,7 @@
 	log . "China [ERR]: [{type}] {name} !{rcode} BY {/forward/upstream}"
 	errors
 
-	forward . tls://1.12.12.12 tls://120.53.53.53 tls://223.5.5.5 tls://223.6.6.6 {
+	forward . tls://119.29.29.29 tls://120.53.53.53 tls://223.5.5.5 tls://223.6.6.6 {
 		max_fails 5
 		health_check 5s
 		max_concurrent 300
