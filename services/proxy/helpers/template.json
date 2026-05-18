@@ -31,7 +31,7 @@
 		"rules": [],
 		"final": "dns.default",
 		"strategy": "prefer_ipv6",
-		"disable_cache": true,
+		"disable_cache": false,
 		"disable_expire": false,
 		"independent_cache": false,
 		"cache_capacity": 3000,
