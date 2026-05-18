@@ -23,7 +23,12 @@ add-taggfw-ip inet@router@gfwip4,inet@router@gfwip6
 
 timeout-sec 10
 
-cache 0
+cache 10000
+cache-stale 3600
+cache-refresh 5
+cache-nodata-ttl 600
+cache-min-ttl 30
+cache-db ${ROUTER_DATA_PATH}/dns/dispatch/cache-db
 
 verdict-cache 60000
 verdict-cache-db ${ROUTER_DATA_PATH}/dns/dispatch/verdict-cache-db
