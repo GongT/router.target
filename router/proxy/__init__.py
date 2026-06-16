@@ -132,6 +132,19 @@ def outbounds_domains(outbounds: list[Outbound]) -> list[str]:
     return result
 
 
+def collect_outbound_domains(config) -> list[str]:
+    results = set()
+    special_types = ['direct', 'selector', 'urltest']
+    for item in config['outbounds']:
+        if item['type'] in special_types: continue
+        tag = item.get('tag', '*missing tag*')
+        server = item.get('server', None)
+        if server is None:
+            logger.warn(f"outbound [{tag}] missing server field.")
+
+        results.add(server)
+    return sorted(list(results))
+
 def load_config_template(file: Path | str):
     if isinstance(file, str):
         file = Path(file)
@@ -143,7 +156,7 @@ def load_config_template(file: Path | str):
             outbounds.append(outbound)
 
     outboundTitles = outbounds_names(outbounds)
-    used_domains = outbounds_domains(outbounds)
+    # used_domains = outbounds_domains(outbounds)
 
     template = read_filtered_file(file)
     config = json.loads(template)
@@ -177,14 +190,14 @@ def load_config_template(file: Path | str):
 
     config["outbounds"] = meta_outbounds + outbound_dicts
 
-    rules: list = config["dns"]["rules"]
-    rules.insert(
-        0,
-        {
-            "domain": used_domains,
-            "action": "route",
-            "server": "dns.china",
-        },
-    )
+    # rules: list = config["dns"]["rules"]
+    # rules.insert(
+    #     0,
+    #     {
+    #         "domain": used_domains,
+    #         "action": "route",
+    #         "server": "dns.china",
+    #     },
+    # )
 
     return config

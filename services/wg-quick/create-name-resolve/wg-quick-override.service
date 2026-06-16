@@ -3,5 +3,7 @@ After=systemd-networkd.service
 
 [Service]
 Environment=IF_NAME=%i
+Environment=ROUTER_DATA_PATH=${ROUTER_DATA_PATH}
+ExecStartPre=-/usr/bin/ip link del %i
 ExecStartPost=${PYTHON3} "${__dirname}/create-dnsmasq-config.py" %i
 StateDirectory=wireguard

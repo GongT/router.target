@@ -1,7 +1,7 @@
 {
 	"log": {
 		"disabled": false,
-		"level": "warn",
+		"level": "debug",
 		"timestamp": false
 	},
 	"dns": {
@@ -20,7 +20,7 @@
 		"disable_cache": false,
 		"disable_expire": false,
 		"independent_cache": false,
-		"cache_capacity": 200,
+		"cache_capacity": 1000,
 		"reverse_mapping": false,
 		"fakeip": {}
 	},

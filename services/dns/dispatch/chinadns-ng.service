@@ -1,7 +1,7 @@
 [Unit]
 Description=DNS dispathing server on 5300
 Requires=systemd-resolved.service
-After=systemd-resolved.service
+After=systemd-resolved.service dnsproxy.service
 
 [Install]
 WantedBy=router.target

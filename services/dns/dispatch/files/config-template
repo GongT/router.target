@@ -5,6 +5,7 @@ china-dns tcp://::1#5306
 trust-dns tcp://::1#5305
 
 chnlist-file /var/lib/lists/chnlist.txt
+chnlist-file /var/lib/proxy/server-domains.list
 chnlist-file ${ROUTER_DATA_PATH}/dns/dispatch/force.china.list
 chnlist-file ${ROUTER_DATA_PATH}/dns/dispatch/force.china.autolist
 
@@ -28,10 +29,10 @@ cache-stale 3600
 cache-refresh 5
 cache-nodata-ttl 600
 cache-min-ttl 30
-cache-db ${ROUTER_DATA_PATH}/dns/dispatch/cache-db
+cache-db /var/lib/dnsdispatch/cache-db
 
 verdict-cache 60000
-verdict-cache-db ${ROUTER_DATA_PATH}/dns/dispatch/verdict-cache-db
+verdict-cache-db /var/lib/dnsdispatch/verdict-cache-db
 
 hosts ${__dirname}/hosts
 hosts ${ROUTER_DATA_PATH}/dns/dispatch/hosts

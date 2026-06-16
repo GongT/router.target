@@ -45,3 +45,9 @@ config["inbounds"] = inbounds
 
 output_file = Path(proxy.STATE_DIR) / "dnsproxy.json"
 write_file_if_changed(output_file, dump_json(config))
+
+domains = proxy.collect_outbound_domains(config)
+dnsmasq_list = '\n'.join(domains)
+
+dnsmasq_list_file = Path(proxy.STATE_DIR).joinpath("server-domains.list")
+write_file_if_changed(dnsmasq_list_file, dnsmasq_list)
