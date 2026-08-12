@@ -40,14 +40,25 @@ class ShadowsocksOutbound(Outbound):
 
             atidx = url.rfind("@")
             method, password = url[:atidx].split(":", 2)
-            addr, port = url[atidx + 1 :].split(":", 2)
+            addr, port_and_path = url[atidx + 1 :].split(":", 2)
         else:
             # 现在的链接只有认证部分进行base64
             atidx = url.rfind("@")
-            addr, port = url[atidx + 1 :].split(":", 2)
+            addr, port_and_path = url[atidx + 1 :].split(":", 2)
 
             url = base64_decode(url[:atidx])
             method, password = url.split(":", 2)
+
+        if '/' in port_and_path:
+            port, pathname = port_and_path.split("/", 2)
+        else:
+            port = port_and_path
+            pathname = ''
+
+        # query string
+        query = ''
+        if '?' in pathname:
+            pathname, query = pathname.split("?", 2)
 
         self.options["server"] = addr
         self.options["server_port"] = int(port)

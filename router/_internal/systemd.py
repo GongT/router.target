@@ -47,6 +47,7 @@ EnvironmentFile={constants.RUNTIME_ENVFILE.as_posix()}
 ## source={src}
 
 {data}
+ReadWritePaths={constants.CACHE_ROOT.absolute().as_posix()}
 """
 
 
