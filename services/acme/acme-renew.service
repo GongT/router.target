@@ -6,10 +6,12 @@ StartLimitIntervalSec=1hour
 [Service]
 Type=oneshot
 RemainAfterExit=no
-Environment=NO_TIMESTAMP=1
+Environment=NO_TIMESTAMP=1 LIBEXEC_ROOT=${LIBEXEC_ROOT}
 ExecStart=/usr/bin/bash "${__dirname}/execute.sh"
 RestartPreventExitStatus=66
 Restart=on-failure
+RestartSec=1min
+TimeoutStartSec=1h
 
 ProtectSystem=strict
 PrivateDevices=yes

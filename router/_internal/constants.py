@@ -8,7 +8,7 @@ from . import fs as _fs
 from . import logger as _logger
 
 relative_dir = Path(__file__).parent
-
+user_agent = "router.target/acme(https://github.com/gongt/router.target)"
 
 def set_working_directory(path: str | Path) -> None:
     global relative_dir

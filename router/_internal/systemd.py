@@ -41,13 +41,13 @@ def filter_unit_file(src: Path) -> str:
         data += f"""
 Slice=router.slice
 EnvironmentFile={constants.RUNTIME_ENVFILE.as_posix()}
+ReadWritePaths={constants.CACHE_ROOT.absolute().as_posix()}
 """
 
     return f"""##### ROUTER GENERATED
 ## source={src}
 
 {data}
-ReadWritePaths={constants.CACHE_ROOT.absolute().as_posix()}
 """
 
 

@@ -24,3 +24,9 @@ def write_file_if_changed(file: Path, data: str):
 
     logger.dim(f"跳过写入，文件未改变: {file}")
     return False
+
+def stringify_shell_variables(variables: dict[str, str], verb="export") -> str:
+    def _escape(value: str) -> str:
+        return json.dumps(value, ensure_ascii=False, check_circular=False)
+
+    return verb + " " + " ".join(f'{key}={_escape(value)}' for key, value in variables.items())
